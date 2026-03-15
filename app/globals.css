@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0a0b24;
+  --surface: #121533;
+  --surface-soft: #1a2240;
+  --line: #25345b;
+  --text: #f3f6ff;
+  --muted: #9da9c7;
+  --accent: #3d36ff;
+  --accent-soft: #2620a0;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans JP", sans-serif;
+  background: radial-gradient(circle at top, #10123a, #07071d 70%);
+  color: var(--text);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

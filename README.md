@@ -1,34 +1,139 @@
-# Noema
+# Noema (Wave 3)
 
-Wave 2 refinement of a comparison-first philosophy / history-of-thought MVP.
+Noema is a **comparison-first philosophy learning app** designed to help users quickly grasp differences between thinkers and positions, then branch into themes and thinker pages.
 
-## Product focus
+Wave 3 keeps the existing product direction and visual identity while migrating to a maintainable, Vercel-friendly architecture.
 
-- Primary: **comparison** (思想家・立場の差を短く把握)
-- Secondary: curated discovery, thinker hubs, and theme entry points
-- Out of scope: backend, auth, CMS, sync, and AI chat mode
+## Project purpose
 
-## Stack in this repository
+- Preserve the current dark premium mobile-first experience.
+- Keep comparison as the primary entry mode.
+- Improve maintainability through typed local content and reusable components.
+- Remain fully local-data driven (no backend, no auth, no CMS).
 
-This repository currently delivers a static front-end prototype:
+## Architecture overview
 
-- `index.html`: page structure and content
-- `styles.css`: dark navy visual system and component styling
-- `script.js`: local deterministic daily picks, grouped search results, and local saved state
+- **Framework**: Next.js App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + CSS design tokens
+- **Data**: local typed content modules in `src/content`
+- **State/storage**: localStorage wrappers and hooks in `src/lib/storage.ts` + `src/hooks`
 
-## Wave 2 highlights
+### Key directories
 
-- Home hierarchy revised to make `おすすめ比較` the strongest block.
-- Compare page strengthened with common ground, clearer left/right distinction, and stronger next-step cards.
-- Thinker page refined into a navigation hub with concise summary and outbound links.
-- Theme page now pushes users into comparison earlier.
-- Bottom nav unified across screens: `ホーム / 検索 / 比較 / 保存済み`.
-- Search results grouped by type and connected to local save actions.
+```text
+app/
+  layout.tsx
+  page.tsx
+  compare/[left]/[right]/page.tsx
+  thinkers/[slug]/page.tsx
+  themes/[slug]/page.tsx
+  search/page.tsx
+  saved/page.tsx
+  not-found.tsx
 
-## Local preview
-
-```bash
-python3 -m http.server 4173
+src/
+  components/
+    layout/
+    common/
+    home/
+    compare/
+    thinker/
+    theme/
+    search/
+    saved/
+  content/
+    thinkers.ts
+    comparisons.ts
+    themes.ts
+  lib/
+    content.ts
+    search.ts
+    recommendations.ts
+    storage.ts
+    routes.ts
+  hooks/
+    useSavedItems.ts
+    useRecentItems.ts
+  types/
+    content.ts
 ```
 
-Open `http://localhost:4173`.
+## Route structure
+
+- `/` Home (recommended comparisons, themes, daily picks)
+- `/compare/[left]/[right]` Comparison detail
+- `/thinkers/[slug]` Thinker detail/hub
+- `/themes/[slug]` Theme detail/entry point
+- `/search` Grouped local search
+- `/saved` Saved items from local storage
+
+## Data/content structure
+
+All major content is typed and centralized:
+
+- `src/types/content.ts`: `Thinker`, `Comparison`, `Theme` models
+- `src/content/thinkers.ts`: seeded thinker data (12 core thinkers)
+- `src/content/comparisons.ts`: flagship comparisons
+- `src/content/themes.ts`: key themes
+
+Derivation/query helpers live in `src/lib/content.ts` and include:
+
+- `getThinkerBySlug`
+- `getComparisonByThinkerPair`
+- `getComparisonsForThinker`
+- `getThemesForThinker`
+- `getThemeBySlug`
+- `getComparisonsForTheme`
+- `getThinkersForTheme`
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+For production build check:
+
+```bash
+npm run build
+npm run start
+```
+
+## Vercel deployment notes
+
+- This project is App Router-compatible and deploys directly to Vercel.
+- No environment variables are required for core functionality.
+- Build command: `npm run build`
+- Output: Next.js default
+
+## How to add a new thinker
+
+1. Open `src/content/thinkers.ts`.
+2. Add a new object matching `Thinker` in `src/types/content.ts`.
+3. Add valid related slugs (`relatedThemeSlugs`, `relatedComparisonSlugs`, etc.).
+4. Confirm the slug resolves at `/thinkers/[slug]`.
+5. Optionally connect from theme/comparison records.
+
+## How to add a new comparison
+
+1. Open `src/content/comparisons.ts`.
+2. Add a `Comparison` object with:
+   - `leftThinkerSlug` and `rightThinkerSlug`
+   - `sections`, `whatToWatch`, next-step slugs
+3. Verify route behavior at `/compare/[left]/[right]`.
+4. Optionally reference it from thinker/theme relations.
+
+## How to add a new theme
+
+1. Open `src/content/themes.ts`.
+2. Add a `Theme` object with related thinkers/comparisons.
+3. Verify `/themes/[slug]` renders expected lists.
+4. Ensure discoverability from home chips/search.
+
+## Legacy static prototype
+
+Wave 2 static files (`index.html`, `styles.css`, `script.js`) are intentionally retained in this repository during migration for parity/reference.

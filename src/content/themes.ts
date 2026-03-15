@@ -1,0 +1,58 @@
+import { Theme } from "@/types/content";
+
+export const themes: Theme[] = [
+  {
+    slug: "knowledge",
+    titleJa: "知識",
+    titleEn: "Knowledge",
+    shortDescription: "私たちは何を、どうやって知れるのか。",
+    relatedThinkerSlugs: ["plato", "aristotle", "descartes", "hume", "kant", "wittgenstein"],
+    relatedComparisonSlugs: ["plato-aristotle", "descartes-hume", "hume-kant"],
+    starterGuidance: "まずはデカルト vs ヒュームで出発点の差をつかむ。",
+  },
+  {
+    slug: "freedom",
+    titleJa: "自由",
+    titleEn: "Freedom",
+    shortDescription: "自由は選択か、制度か、自己創造か。",
+    relatedThinkerSlugs: ["hume", "kant", "rousseau", "hobbes", "nietzsche", "sartre"],
+    relatedComparisonSlugs: ["hobbes-rousseau", "hume-kant", "kant-nietzsche", "nietzsche-sartre"],
+    starterGuidance: "ホッブズ vs ルソーから政治的自由の対比に入る。",
+  },
+  {
+    slug: "happiness",
+    titleJa: "幸福",
+    titleEn: "Happiness",
+    shortDescription: "善く生きるとは快か徳か、それとも調和か。",
+    relatedThinkerSlugs: ["aristotle", "confucius", "laozi", "nietzsche"],
+    relatedComparisonSlugs: ["confucius-laozi", "kant-nietzsche"],
+    starterGuidance: "孔子 vs 老子で実践と自然のバランスを比較する。",
+  },
+  {
+    slug: "justice",
+    titleJa: "正義",
+    titleEn: "Justice",
+    shortDescription: "秩序と平等、共同体と個人の両立を考える。",
+    relatedThinkerSlugs: ["plato", "kant", "rousseau", "hobbes", "confucius"],
+    relatedComparisonSlugs: ["plato-aristotle", "hobbes-rousseau", "confucius-laozi"],
+    starterGuidance: "まずプラトン vs アリストテレスで政治秩序の基礎を確認。",
+  },
+  {
+    slug: "death",
+    titleJa: "死",
+    titleEn: "Death",
+    shortDescription: "有限性は自由と意味をどう変えるか。",
+    relatedThinkerSlugs: ["plato", "sartre", "nietzsche"],
+    relatedComparisonSlugs: ["nietzsche-sartre"],
+    starterGuidance: "ニーチェ vs サルトルで有限性と責任の差を見る。",
+  },
+  {
+    slug: "language",
+    titleJa: "言語",
+    titleEn: "Language",
+    shortDescription: "言語は世界を写すのか、作るのか。",
+    relatedThinkerSlugs: ["descartes", "wittgenstein", "laozi"],
+    relatedComparisonSlugs: ["descartes-hume"],
+    starterGuidance: "ウィトゲンシュタインに進む前にデカルト vs ヒュームを押さえる。",
+  },
+];
