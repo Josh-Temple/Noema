@@ -2,6 +2,17 @@
 
 Noema is a **comparison-first philosophy learning app** built with Next.js App Router.
 
+## Current public navigation (aligned with production)
+
+The app is organized around comparison-led reading paths and direct entrypoints:
+
+- `/` home (search, recommended comparisons, themes, daily picks)
+- `/compare/[left]/[right]` comparison detail
+- `/thinkers/[slug]` thinker detail
+- `/themes/[slug]` theme detail
+- `/search` grouped local search (thinkers / comparisons / themes)
+- `/saved` saved items
+
 ## Single active implementation and deploy target
 
 This repository has one active product path:
@@ -10,15 +21,6 @@ This repository has one active product path:
 - 📦 **Archived prototype:** `legacy/wave2-static/` (reference only, not deployed)
 
 There are no competing root-level static entrypoints. Vercel should deploy the repository root as a Next.js project.
-
-## Route map (active app)
-
-- `/` home
-- `/compare/[left]/[right]` comparison detail
-- `/thinkers/[slug]` thinker page
-- `/themes/[slug]` theme page
-- `/search` grouped local search
-- `/saved` saved items
 
 ## Tech stack
 

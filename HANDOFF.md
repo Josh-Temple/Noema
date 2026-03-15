@@ -1,48 +1,40 @@
 # Noema Wave 4 Handoff
 
-## Current mainline decision
+## Session objective
 
-The active mainline is the **Next.js App Router implementation at repository root**.
+Applied a practical polish pass based on the latest checklist:
+
+1. keep README/HANDOFF/public product description in sync,
+2. strengthen home recommendations,
+3. make comparison-section reading grain more consistent,
+4. make thinker pages function more clearly as hubs back to comparisons.
+
+## What changed in this pass
+
+- Home (`/`) now presents **four recommended comparisons** (instead of two) and adds helper description text for first-time use.
+- Comparison section cards now use explicit left/right labels and a standardized “差分の要点” line to stabilize reading rhythm across blocks.
+- Thinker pages now surface related comparisons with stronger visual hierarchy:
+  - heading metadata (“start from the top” guidance),
+  - “推奨” badges on the first two related comparison links.
+- README refreshed to keep repository/public navigation wording aligned with the currently deployed comparison-first app.
+
+## Active implementation confirmation
 
 - Active runtime path: `app/` + `src/`
 - Active deploy target: repository root (Vercel Next.js)
-- Archived only: `legacy/wave2-static/`
+- Legacy archive only: `legacy/wave2-static/`
 
-This handoff intentionally removes ambiguity between old static Wave 2 files and the active app.
+## Checks run this session
 
-## What was done in this pass
+- `npm run lint`
+- `npm run test`
+- `npm run build`
 
-1. Confirmed repo/public mainline is the structured Next.js app, not static Wave 2.
-2. Confirmed legacy static files are isolated under `legacy/wave2-static/`.
-3. Updated README to explicitly describe:
-   - one active implementation path
-   - one deployment target
-   - route map for direct navigation
-4. Added dynamic route smoke tests for:
-   - `/compare/[left]/[right]`
-   - `/thinkers/[slug]`
-   - `/themes/[slug]`
-5. Added explicit `vercel.json` so deployment intent is visible in-repo.
+## Next suggested tasks
 
-## Required direct routes (verified by tests/build)
-
-- `/compare/[left]/[right]`
-- `/thinkers/[slug]`
-- `/themes/[slug]`
-
-## Operational commands
-
-```bash
-npm install
-npm run dev
-npm run lint
-npm run typecheck
-npm run test
-npm run build
-```
-
-## Notes for next session
-
-- Keep `legacy/wave2-static/` as archive-only unless intentionally restored.
-- If deployment settings change, keep README + HANDOFF + `vercel.json` aligned.
-- Prioritize editorial/content expansion over structural rewrites unless mainline clarity regresses.
+1. Expand recommendation logic from simple list slicing to score-based ranking (recent views + theme affinity).
+2. Add persistence verification e2e for save flows:
+   - save action immediate reflection,
+   - persisted after reload,
+   - visible on `/saved`.
+3. Improve search result grouping readability with explicit section counts and empty-state hints.

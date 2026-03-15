@@ -15,14 +15,16 @@ export default function HomePage() {
   const today = getTodayPick();
   const { recentItems } = useRecentItems();
   const recentCompares = getRecentRecommendations(recentItems);
+  const recommendedComparisons = comparisons.slice(0, 4);
 
   return (
     <div>
       <SearchBar />
       <section className="mb-6">
-        <SectionTitle title="おすすめ比較" />
-        <RecommendedComparisonCard item={comparisons[0]} primary />
-        <RecommendedComparisonCard item={comparisons[1]} />
+        <SectionTitle title="おすすめ比較" description="まずはここから。短時間で軸の違いをつかめる比較を並べています。" />
+        {recommendedComparisons.map((item, index) => (
+          <RecommendedComparisonCard key={item.slug} item={item} primary={index === 0} />
+        ))}
       </section>
 
       <section className="mb-6">
