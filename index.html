@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noema Wave 2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <h1 id="pageTitle">ホーム</h1>
+      </header>
+
+      <main class="page-wrap">
+        <section class="page active" id="homePage">
+          <div class="search-trigger" data-nav-target="search">思想家・テーマ・比較を検索</div>
+
+          <section class="content-block">
+            <div class="section-head">
+              <h2>おすすめ比較</h2>
+              <button class="ghost-button" data-nav-target="compare">比較を見る</button>
+            </div>
+            <article class="comparison-card primary" data-open-page="compare">
+              <p class="comparison-eyebrow">プラトン <span>VS</span> アリストテレス</p>
+              <h3>イデア論 vs 実在論</h3>
+              <p class="supporting">理想から世界を見るか、観察可能な実体から捉えるか。</p>
+              <p class="why-line">なぜ重要？ その後の形而上学と科学観の土台がここで分岐します。</p>
+            </article>
+            <article class="comparison-card" data-open-page="compare">
+              <p class="comparison-eyebrow">デカルト <span>VS</span> ヒューム</p>
+              <h3>合理主義 vs 経験主義</h3>
+              <p class="supporting">確実な知識の出発点を理性に置くか、経験に置くか。</p>
+              <p class="why-line">なぜ重要？ カントの統合を理解する入口になります。</p>
+            </article>
+          </section>
+
+          <section class="content-block">
+            <h2>テーマ</h2>
+            <p class="block-description">テーマは比較に入る入口です。興味のある論点を選んでください。</p>
+            <div class="chip-wrap">
+              <button class="chip" data-open-page="theme">知識</button>
+              <button class="chip" data-open-page="theme">自由</button>
+              <button class="chip" data-open-page="theme">幸福</button>
+              <button class="chip" data-open-page="theme">正義</button>
+              <button class="chip" data-open-page="theme">死</button>
+              <button class="chip" data-open-page="theme">言語</button>
+            </div>
+          </section>
+
+          <section class="content-block">
+            <h2>任せる</h2>
+            <p class="block-description">日付ベースで毎日同じ提案を表示します（ローカル固定ロジック）。</p>
+            <div class="list-card" id="dailyThinker"></div>
+            <div class="list-card" id="dailyComparison"></div>
+            <div class="list-card" id="dailyQuestion"></div>
+          </section>
+
+          <section class="content-block">
+            <h2>最近見た項目の近く</h2>
+            <div class="next-card" data-open-page="compare">
+              <p>次の比較</p>
+              <h3>ヒューム vs カント</h3>
+              <p>懐疑から批判哲学へ、認識の条件を再定義する流れ。</p>
+            </div>
+            <div class="next-card" data-open-page="thinker">
+              <p>次に見る思想家</p>
+              <h3>ジャン=ジャック・ルソー</h3>
+              <p>自由と社会契約をつなぐ政治哲学の分岐点。</p>
+            </div>
+          </section>
+        </section>
+
+        <section class="page" id="searchPage">
+          <div class="search-box-wrap">
+            <input id="searchInput" type="search" placeholder="思想家・テーマ・比較を検索" />
+          </div>
+          <section class="content-block search-group">
+            <h2>比較</h2>
+            <div id="comparisonResults"></div>
+          </section>
+          <section class="content-block search-group">
+            <h2>思想家</h2>
+            <div id="thinkerResults"></div>
+          </section>
+          <section class="content-block search-group">
+            <h2>テーマ</h2>
+            <div id="themeResults"></div>
+          </section>
+        </section>
+
+        <section class="page" id="comparePage">
+          <section class="content-block compare-hero">
+            <p class="muted">思索の比較</p>
+            <div class="identity-row">
+              <div class="identity-card left">
+                <strong>デカルト</strong>
+                <span>理性</span>
+              </div>
+              <span class="vs">VS</span>
+              <div class="identity-card right">
+                <strong>ヒューム</strong>
+                <span>経験</span>
+              </div>
+            </div>
+            <h2>デカルト vs ヒューム</h2>
+            <p class="supporting">合理論と経験論の対立</p>
+            <div class="chip-wrap">
+              <span class="chip static">認識論</span>
+              <span class="chip static">近代哲学</span>
+              <span class="chip static">因果性</span>
+            </div>
+          </section>
+
+          <section class="content-block">
+            <h3>この比較で見るポイント</h3>
+            <ol class="outline-list">
+              <li>知識の源泉はどこにあるか。</li>
+              <li>自我の確実性はどこまで保証できるか。</li>
+              <li>因果関係を必然とみなせるか。</li>
+            </ol>
+          </section>
+
+          <section class="content-block">
+            <h3>共通点</h3>
+            <div class="section-card common-ground">
+              <p>どちらも「確かな知」を目指し、単なる権威依存から離れて方法を重視しました。</p>
+            </div>
+          </section>
+
+          <section class="content-block">
+            <h3>差の要約</h3>
+            <div class="section-card">
+              <p>
+                デカルトは明証性を基準に理性から体系を築き、ヒュームは経験の範囲を超える主張を慎重に退けました。
+                この緊張関係が、カントの批判哲学へ接続されます。
+              </p>
+            </div>
+          </section>
+
+          <section class="content-block">
+            <h3>基本的な回答</h3>
+            <div class="duo-grid">
+              <article class="section-card left-border">
+                <h4>デカルト（合理論）</h4>
+                <p>明晰判明な観念を基準に、数学のような確実性を知識の理想に据える。</p>
+              </article>
+              <article class="section-card right-border">
+                <h4>ヒューム（経験論）</h4>
+                <p>知識は印象と観念に由来し、因果や自我は習慣に支えられた推論にすぎない。</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="content-block">
+            <h3>次に見るとよい項目</h3>
+            <div class="next-card" data-open-page="compare">
+              <p>関連比較</p>
+              <h4>ヒューム vs カント</h4>
+              <p>懐疑に対して、認識の条件をどう再建したかを確認する。</p>
+            </div>
+            <div class="next-card" data-open-page="theme">
+              <p>関連テーマ</p>
+              <h4>知識とは何か</h4>
+              <p>合理主義と経験主義をつなぐ全体マップを見る。</p>
+            </div>
+          </section>
+        </section>
+
+        <section class="page" id="savedPage">
+          <section class="content-block">
+            <h2>保存済み</h2>
+            <p class="block-description">ローカル保存のみ。比較・思想家・テーマをまとめて管理できます。</p>
+            <div id="savedList"></div>
+          </section>
+        </section>
+
+        <section class="overlay-page" id="thinkerPage">
+          <button class="back-button" data-close-overlay>← 戻る</button>
+          <section class="content-block thinker-top">
+            <p class="muted">Noema Thinker</p>
+            <h2>イマヌエル・カント</h2>
+            <p class="supporting">一言要約：経験と理性の対立を、認識の条件という視点で再編した哲学者。</p>
+          </section>
+          <section class="content-block">
+            <h3>中心問題</h3>
+            <div class="section-card"><p>私は何を知りうるか。理性の限界を越えずに、普遍的知識の条件を示せるか。</p></div>
+          </section>
+          <section class="content-block">
+            <h3>基本的な答え</h3>
+            <div class="section-card"><p>認識は受動的な写しではなく、時間・空間・カテゴリーによって構成される。</p></div>
+          </section>
+          <section class="content-block duo-grid">
+            <article class="section-card">
+              <h4>反対した相手・立場</h4>
+              <p>独断的合理論、懐疑的経験論の双方を批判して統合を試みる。</p>
+            </article>
+            <article class="section-card">
+              <h4>後世への影響</h4>
+              <p>ドイツ観念論、現象学、現代倫理学・政治哲学の基盤を形成。</p>
+            </article>
+          </section>
+          <section class="content-block">
+            <h3>哲学の三柱</h3>
+            <div class="section-card"><h4>知識観</h4><p>対象は現象として認識され、物自体は理論認識の外に置かれる。</p></div>
+            <div class="section-card"><h4>人間観</h4><p>自然法則に従う存在でありつつ、実践理性により自律できる。</p></div>
+            <div class="section-card"><h4>倫理・政治への含意</h4><p>人格の尊厳を基礎に、普遍化可能な行為原理を重視する。</p></div>
+          </section>
+          <section class="content-block">
+            <h3>関連比較</h3>
+            <div class="next-card" data-open-page="compare"><h4>カント vs ヒューム</h4><p>懐疑への応答としての批判哲学。</p></div>
+            <div class="next-card" data-open-page="compare"><h4>カント vs ルソー</h4><p>自由・法・公共性の接点を比較。</p></div>
+          </section>
+          <section class="content-block">
+            <h3>関連テーマ / 次に見る思想家</h3>
+            <div class="chip-wrap">
+              <button class="chip" data-open-page="theme">認識論</button>
+              <button class="chip" data-open-page="theme">啓蒙主義</button>
+            </div>
+            <div class="next-card" data-open-page="thinker"><h4>デイヴィッド・ヒューム</h4><p>カントに決定的な問題意識を与えた経験論者。</p></div>
+          </section>
+        </section>
+
+        <section class="overlay-page" id="themePage">
+          <button class="back-button" data-close-overlay>← 戻る</button>
+          <section class="content-block">
+            <p class="muted">テーマ</p>
+            <h2>知識とは何か</h2>
+            <p class="supporting">知識の源泉・正当化・真理の関係を、主要な対立軸で素早く掴む。</p>
+          </section>
+          <section class="content-block">
+            <h3>このテーマで最初に見るなら</h3>
+            <div class="next-card" data-open-page="compare">
+              <h4>デカルト vs ヒューム</h4>
+              <p>合理主義と経験主義の基本対立を先に押さえる。</p>
+            </div>
+          </section>
+          <section class="content-block">
+            <h3>関連比較</h3>
+            <div class="next-card" data-open-page="compare"><h4>プラトン vs アリストテレス</h4><p>普遍概念の扱いの差を確認。</p></div>
+            <div class="next-card" data-open-page="compare"><h4>ロック vs ライプニッツ</h4><p>生得観念をめぐる近代的対立。</p></div>
+          </section>
+          <section class="content-block">
+            <h3>関連思想家</h3>
+            <div class="chip-wrap">
+              <button class="chip" data-open-page="thinker">プラトン</button>
+              <button class="chip" data-open-page="thinker">デカルト</button>
+              <button class="chip" data-open-page="thinker">ヒューム</button>
+              <button class="chip" data-open-page="thinker">カント</button>
+            </div>
+          </section>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" id="bottomNav">
+        <button data-nav="home" class="active">ホーム</button>
+        <button data-nav="search">検索</button>
+        <button data-nav="compare">比較</button>
+        <button data-nav="saved">保存済み</button>
+      </nav>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
