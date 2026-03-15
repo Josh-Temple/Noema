@@ -1,4 +1,5 @@
 import { comparisons, thinkers, themes } from "@/lib/content";
+import { StoredItem } from "@/lib/storage";
 
 const daySeed = () => {
   const now = new Date();
@@ -16,8 +17,9 @@ export const getTodayPick = () => ({
   theme: pick(themes, 5),
 });
 
-export const getRecentRecommendations = (recent: string[]) => {
+export const getRecentRecommendations = (recent: StoredItem[]) => {
+  const recentComparisonSlugs = new Set(recent.filter((item) => item.kind === "comparison").map((item) => item.slug));
   const fallback = comparisons.slice(0, 3);
-  const matched = comparisons.filter((item) => recent.includes(item.slug));
+  const matched = comparisons.filter((item) => recentComparisonSlugs.has(item.slug));
   return [...matched, ...fallback].slice(0, 3);
 };

@@ -1,64 +1,69 @@
-# Noema Wave 3 Handoff
+# Noema Wave 4 Handoff
 
-## What changed structurally in Wave 3
+## Wave 4 focus
 
-1. **Migrated from static prototype to Next.js App Router + TypeScript + Tailwind**.
-   - Added route-based pages under `app/`.
-   - Added global layout shell and unified bottom navigation.
+This wave consolidated Noema into a clear mainline product codebase and added baseline reliability, testing, and accessibility hardening without changing the core visual identity or comparison-first product direction.
 
-2. **Separated content from rendering**.
-   - Moved thinker/comparison/theme data into typed local modules:
-     - `src/content/thinkers.ts`
-     - `src/content/comparisons.ts`
-     - `src/content/themes.ts`
-   - Added models in `src/types/content.ts`.
+## What was consolidated
 
-3. **Introduced derivation utilities and route helpers**.
-   - Content querying now centralized in `src/lib/content.ts`.
-   - Route builders in `src/lib/routes.ts`.
-   - Search index and filtering in `src/lib/search.ts`.
-   - Daily picks/recommendation helpers in `src/lib/recommendations.ts`.
+1. **Single active implementation path**
+   - Kept Next.js App Router implementation as the only active product path.
+   - Archived the old static prototype into `legacy/wave2-static/`.
 
-4. **Centralized local state/storage logic**.
-   - Added reusable local storage wrappers in `src/lib/storage.ts`.
-   - Added hooks:
-     - `src/hooks/useSavedItems.ts`
-     - `src/hooks/useRecentItems.ts`
+2. **Storage reliability**
+   - Reworked local storage handling to use typed saved/recent records (`kind + slug`).
+   - Added malformed storage recovery, dedupe, stable ordering, and recent-item limit enforcement.
+   - Ensured saved/recent access remains centralized via storage helpers/hooks.
 
-5. **Componentized page sections for maintainability**.
-   - Added reusable components across `src/components/*` for home/compare/thinker/theme/search/saved/common/layout.
+3. **Content relation integrity**
+   - Added `src/lib/contentValidation.ts` to validate thinker/theme/comparison references.
+   - Added tests that fail on broken internal content links.
 
-6. **Added baseline error/empty handling**.
-   - Added `app/not-found.tsx`.
-   - Added reusable `EmptyState` and empty result rendering for saved/search.
+4. **Accessibility and UX consistency**
+   - Improved nav semantics (`aria-label`, `aria-current`) and focus-visible states.
+   - Added skip-link to main content.
+   - Improved search input label association and grouped result semantics.
+   - Added explicit save buttons with accessible labels and states.
+   - Improved not-found messaging and next actions.
 
-## What was intentionally not changed
+5. **Quality gates and tests**
+   - Added scripts: `lint`, `typecheck`, `test`, `build`, `dev`.
+   - Added Vitest + Testing Library setup.
+   - Added high-value tests for:
+     - content helpers
+     - route/path helpers
+     - search indexing/filtering
+     - storage behavior
+     - content relation validation
+     - smoke rendering for key pages (home/search)
 
-- Core visual language (dark navy + blue-violet accent) was preserved.
-- Comparison-first experience remains the product center.
-- No backend, auth, CMS, sync, graph view, timeline-first mode, quiz expansion, or AI chat features were introduced.
+## What was archived/removed
+
+- Moved legacy static files from root to `legacy/wave2-static/`:
+  - `index.html`
+  - `styles.css`
+  - `script.js`
+
+## Current quality gates
+
+Run in CI/local:
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+```
 
 ## Remaining technical debt
 
-1. **Saved actions UI coverage is partial**
-   - Hook infrastructure exists, but save buttons should be surfaced consistently on thinker/theme/compare cards.
+1. Add broader page-level smoke coverage for dynamic routes (`/compare`, `/thinkers`, `/themes`, `/saved`) with focused mocks.
+2. Add an optional dedicated `npm run validate:content` command if content volume grows.
+3. Consider introducing small route-level error boundaries for clearer recovery in future waves.
 
-2. **Potentially missing relation slugs in seed data**
-   - A few thinker relation links may reference non-seeded thinkers; currently handled safely by filtered derivation helpers.
+## Recommended Wave 5 directions
 
-3. **Content scale and editorial consistency**
-   - Seed content is suitable for MVP architecture but still needs editorial QA for tone consistency and cross-link depth.
-
-4. **Tests**
-   - No dedicated unit/integration test suite yet for content utilities, search behavior, and hooks.
-
-## Recommended Wave 4 priorities
-
-1. Add lightweight automated tests for:
-   - content derivation helpers
-   - search grouping/filtering
-   - storage hooks behavior
-2. Expand comparison coverage while preserving concise reading density.
-3. Improve save UX consistency across all cards and detail pages.
-4. Add optional redirect route support (comparison slug -> pair route) if editorial workflow benefits.
-5. Perform accessibility pass (focus order, keyboard nav, landmarks, contrast checks).
+1. Expand content packs with editorial QA now that relation validation exists.
+2. Add targeted UI tests around save/recent interactions across more cards.
+3. Add lightweight CI workflow to enforce quality gates on every PR.
+4. Continue incremental accessibility checks (keyboard flow + screen reader pass on all detail pages).

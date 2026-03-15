@@ -1,29 +1,34 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { STORAGE_KEYS, loadStringArray, saveStringArray } from "@/lib/storage";
+import { ItemKind, STORAGE_KEYS, StoredItem, loadStoredItems, saveStoredItems, toggleSavedItem } from "@/lib/storage";
 
 export const useSavedItems = () => {
-  const [savedItems, setSavedItems] = useState<string[]>([]);
+  const [savedItems, setSavedItems] = useState<StoredItem[]>([]);
 
   useEffect(() => {
-    setSavedItems(loadStringArray(STORAGE_KEYS.saved));
+    setSavedItems(loadStoredItems(STORAGE_KEYS.saved));
   }, []);
 
-  const toggleSaved = useCallback((slug: string) => {
+  const toggleSaved = useCallback((kind: ItemKind, slug: string) => {
     setSavedItems((prev) => {
-      const next = prev.includes(slug) ? prev.filter((item) => item !== slug) : [slug, ...prev];
-      saveStringArray(STORAGE_KEYS.saved, next);
+      const next = toggleSavedItem(prev, { kind, slug });
+      saveStoredItems(STORAGE_KEYS.saved, next);
       return next;
     });
   }, []);
+
+  const isSaved = useCallback(
+    (kind: ItemKind, slug: string) => savedItems.some((item) => item.kind === kind && item.slug === slug),
+    [savedItems],
+  );
 
   return useMemo(
     () => ({
       savedItems,
       toggleSaved,
-      isSaved: (slug: string) => savedItems.includes(slug),
+      isSaved,
     }),
-    [savedItems, toggleSaved],
+    [savedItems, toggleSaved, isSaved],
   );
 };

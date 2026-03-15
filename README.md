@@ -1,139 +1,83 @@
-# Noema (Wave 3)
+# Noema (Wave 4)
 
-Noema is a **comparison-first philosophy learning app** designed to help users quickly grasp differences between thinkers and positions, then branch into themes and thinker pages.
+Noema is a **comparison-first philosophy learning app** built with Next.js App Router.
+Wave 4 consolidates the repository to a single active implementation path and adds baseline quality gates.
 
-Wave 3 keeps the existing product direction and visual identity while migrating to a maintainable, Vercel-friendly architecture.
+## Active architecture (single mainline)
 
-## Project purpose
+- **Active product**: Next.js app in `app/` + `src/`
+- **Legacy prototype**: archived under `legacy/wave2-static/`
+- **Framework**: Next.js 14 App Router + TypeScript + Tailwind CSS
+- **Data model**: local typed content modules in `src/content`
+- **Local state**: centralized storage helpers in `src/lib/storage.ts` and hooks in `src/hooks`
 
-- Preserve the current dark premium mobile-first experience.
-- Keep comparison as the primary entry mode.
-- Improve maintainability through typed local content and reusable components.
-- Remain fully local-data driven (no backend, no auth, no CMS).
+## Route map
 
-## Architecture overview
+- `/` home
+- `/compare/[left]/[right]` comparison detail
+- `/thinkers/[slug]` thinker page
+- `/themes/[slug]` theme page
+- `/search` grouped local search
+- `/saved` saved items
 
-- **Framework**: Next.js App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS + CSS design tokens
-- **Data**: local typed content modules in `src/content`
-- **State/storage**: localStorage wrappers and hooks in `src/lib/storage.ts` + `src/hooks`
+## Content model
 
-### Key directories
+- `src/types/content.ts`: `Thinker`, `Comparison`, `Theme`, `SearchEntry`
+- `src/content/thinkers.ts`: thinker seeds
+- `src/content/comparisons.ts`: comparison seeds
+- `src/content/themes.ts`: theme seeds
+- `src/lib/content.ts`: lookup/derivation helpers
+- `src/lib/contentValidation.ts`: relation integrity validation
 
-```text
-app/
-  layout.tsx
-  page.tsx
-  compare/[left]/[right]/page.tsx
-  thinkers/[slug]/page.tsx
-  themes/[slug]/page.tsx
-  search/page.tsx
-  saved/page.tsx
-  not-found.tsx
-
-src/
-  components/
-    layout/
-    common/
-    home/
-    compare/
-    thinker/
-    theme/
-    search/
-    saved/
-  content/
-    thinkers.ts
-    comparisons.ts
-    themes.ts
-  lib/
-    content.ts
-    search.ts
-    recommendations.ts
-    storage.ts
-    routes.ts
-  hooks/
-    useSavedItems.ts
-    useRecentItems.ts
-  types/
-    content.ts
-```
-
-## Route structure
-
-- `/` Home (recommended comparisons, themes, daily picks)
-- `/compare/[left]/[right]` Comparison detail
-- `/thinkers/[slug]` Thinker detail/hub
-- `/themes/[slug]` Theme detail/entry point
-- `/search` Grouped local search
-- `/saved` Saved items from local storage
-
-## Data/content structure
-
-All major content is typed and centralized:
-
-- `src/types/content.ts`: `Thinker`, `Comparison`, `Theme` models
-- `src/content/thinkers.ts`: seeded thinker data (12 core thinkers)
-- `src/content/comparisons.ts`: flagship comparisons
-- `src/content/themes.ts`: key themes
-
-Derivation/query helpers live in `src/lib/content.ts` and include:
-
-- `getThinkerBySlug`
-- `getComparisonByThinkerPair`
-- `getComparisonsForThinker`
-- `getThemesForThinker`
-- `getThemeBySlug`
-- `getComparisonsForTheme`
-- `getThinkersForTheme`
-
-## Local development
+## Development workflow
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
-
-For production build check:
+## Quality gates
 
 ```bash
+npm run lint
+npm run typecheck
+npm run test
 npm run build
-npm run start
 ```
 
-## Vercel deployment notes
+## Validation workflow
 
-- This project is App Router-compatible and deploys directly to Vercel.
-- No environment variables are required for core functionality.
+- Content relation validation lives in `src/lib/contentValidation.ts`.
+- Tests fail when thinker/theme/comparison references are broken.
+
+## Build and deploy flow
+
+- Deployment target is the root Next.js app (Vercel default for this repository).
 - Build command: `npm run build`
-- Output: Next.js default
+- Start command: `npm run start`
+- No required environment variables.
 
-## How to add a new thinker
+## How to add content safely
 
-1. Open `src/content/thinkers.ts`.
-2. Add a new object matching `Thinker` in `src/types/content.ts`.
-3. Add valid related slugs (`relatedThemeSlugs`, `relatedComparisonSlugs`, etc.).
-4. Confirm the slug resolves at `/thinkers/[slug]`.
-5. Optionally connect from theme/comparison records.
+### Add a thinker
+1. Add thinker object in `src/content/thinkers.ts`.
+2. Add valid relation slugs (`relatedThemeSlugs`, `relatedComparisonSlugs`, etc.).
+3. Run `npm run test` to verify relation integrity.
 
-## How to add a new comparison
+### Add a comparison
+1. Add comparison object in `src/content/comparisons.ts`.
+2. Ensure left/right thinker slugs and next-step references exist.
+3. Run `npm run test`.
 
-1. Open `src/content/comparisons.ts`.
-2. Add a `Comparison` object with:
-   - `leftThinkerSlug` and `rightThinkerSlug`
-   - `sections`, `whatToWatch`, next-step slugs
-3. Verify route behavior at `/compare/[left]/[right]`.
-4. Optionally reference it from thinker/theme relations.
+### Add a theme
+1. Add theme object in `src/content/themes.ts`.
+2. Ensure related thinker/comparison slugs exist.
+3. Run `npm run test`.
 
-## How to add a new theme
+## Legacy reference
 
-1. Open `src/content/themes.ts`.
-2. Add a `Theme` object with related thinkers/comparisons.
-3. Verify `/themes/[slug]` renders expected lists.
-4. Ensure discoverability from home chips/search.
+Wave 2 static prototype files are archived for parity/reference in:
 
-## Legacy static prototype
-
-Wave 2 static files (`index.html`, `styles.css`, `script.js`) are intentionally retained in this repository during migration for parity/reference.
+- `legacy/wave2-static/index.html`
+- `legacy/wave2-static/styles.css`
+- `legacy/wave2-static/script.js`

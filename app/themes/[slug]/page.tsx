@@ -4,6 +4,7 @@ import { ThemeStarterCard } from "@/components/theme/ThemeStarterCard";
 import { ThemeComparisonList } from "@/components/theme/ThemeComparisonList";
 import { ThemeThinkerList } from "@/components/theme/ThemeThinkerList";
 import { getComparisonsForTheme, getThemeBySlug, getThinkersForTheme } from "@/lib/content";
+import { RecentTracker } from "@/components/common/RecentTracker";
 
 export default function ThemePage({ params }: { params: { slug: string } }) {
   const theme = getThemeBySlug(params.slug);
@@ -11,6 +12,7 @@ export default function ThemePage({ params }: { params: { slug: string } }) {
 
   return (
     <div>
+      <RecentTracker kind="theme" slug={theme.slug} />
       <ThemeHero theme={theme} />
       <ThemeStarterCard text={theme.starterGuidance} />
       <ThemeComparisonList items={getComparisonsForTheme(theme.slug)} />
