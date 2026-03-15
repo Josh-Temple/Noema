@@ -1,21 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { STORAGE_KEYS, loadStringArray, saveStringArray } from "@/lib/storage";
-
-const RECENT_LIMIT = 10;
+import { ItemKind, STORAGE_KEYS, StoredItem, addRecentItem, loadStoredItems, saveStoredItems } from "@/lib/storage";
 
 export const useRecentItems = () => {
-  const [recentItems, setRecentItems] = useState<string[]>([]);
+  const [recentItems, setRecentItems] = useState<StoredItem[]>([]);
 
   useEffect(() => {
-    setRecentItems(loadStringArray(STORAGE_KEYS.recent));
+    setRecentItems(loadStoredItems(STORAGE_KEYS.recent));
   }, []);
 
-  const addRecent = useCallback((slug: string) => {
+  const addRecent = useCallback((kind: ItemKind, slug: string) => {
     setRecentItems((prev) => {
-      const next = [slug, ...prev.filter((item) => item !== slug)].slice(0, RECENT_LIMIT);
-      saveStringArray(STORAGE_KEYS.recent, next);
+      const next = addRecentItem(prev, { kind, slug });
+      saveStoredItems(STORAGE_KEYS.recent, next);
       return next;
     });
   }, []);

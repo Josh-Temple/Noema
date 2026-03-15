@@ -5,6 +5,7 @@ import { RelatedComparisonStrip } from "@/components/thinker/RelatedComparisonSt
 import { RelatedThemeStrip } from "@/components/thinker/RelatedThemeStrip";
 import { NextThinkerStrip } from "@/components/thinker/NextThinkerStrip";
 import { getComparisonsForThinker, getRelatedThinkers, getThemesForThinker, getThinkerBySlug } from "@/lib/content";
+import { RecentTracker } from "@/components/common/RecentTracker";
 
 export default function ThinkerPage({ params }: { params: { slug: string } }) {
   const thinker = getThinkerBySlug(params.slug);
@@ -12,6 +13,7 @@ export default function ThinkerPage({ params }: { params: { slug: string } }) {
 
   return (
     <div>
+      <RecentTracker kind="thinker" slug={thinker.slug} />
       <ThinkerHero thinker={thinker} />
       <ThinkerSummaryCard title="核心の問い" body={thinker.coreQuestion} />
       <ThinkerSummaryCard title="基本回答" body={thinker.basicAnswer} />
