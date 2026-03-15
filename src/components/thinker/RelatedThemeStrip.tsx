@@ -1,0 +1,16 @@
+import Link from "next/link";
+import { Theme } from "@/types/content";
+import { themePath } from "@/lib/routes";
+
+export const RelatedThemeStrip = ({ items }: { items: Theme[] }) => (
+  <section className="mb-4">
+    <h3 className="mb-2 text-2xl font-bold">関連テーマ</h3>
+    <div className="flex flex-wrap gap-2">
+      {items.map((item) => (
+        <Link key={item.slug} href={themePath(item.slug)} className="rounded-full border border-[#2b3a68] bg-[#1b2744] px-3 py-2 text-sm">
+          {item.titleJa}
+        </Link>
+      ))}
+    </div>
+  </section>
+);
