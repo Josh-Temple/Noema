@@ -51,6 +51,19 @@ npm run build
 - Start command: `npm run start`
 - Required environment variables: none
 
+
+## Current content focus
+
+- Modern Epistemology Pack (近代認識論パック):
+  - Added corridor links around Descartes → Locke → Hume → Kant
+  - Added Spinoza / Leibniz / Berkeley comparisons to strengthen branching around knowledge and truth
+- Ethics and Politics Pack (倫理・政治パック):
+  - Added norm/political corridor links around Kant → Bentham → Mill and Hobbes → Locke → Rousseau
+  - Added Rawls / Marx entry comparisons to strengthen justice and state-legitimacy pathways
+- Ancient Ethics Pack (古代倫理パック):
+  - Added ancient ethics corridor links around Plato / Aristotle / Stoicism / Epicureanism
+  - Added practical pathways for “善く生きるとは何か” and “自由とは何か” through Stoic and Epicurean comparisons
+
 ## Content model
 
 - `src/types/content.ts`: `Thinker`, `Comparison`, `Theme`, `SearchEntry`

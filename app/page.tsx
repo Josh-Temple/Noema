@@ -8,14 +8,14 @@ import { DiscoveryCard } from "@/components/home/DiscoveryCard";
 import { RecentItemCard } from "@/components/home/RecentItemCard";
 import { comparisons, themes } from "@/lib/content";
 import { comparisonPath, thinkerPath } from "@/lib/routes";
-import { getTodayPick, getRecentRecommendations } from "@/lib/recommendations";
+import { getFeaturedComparisons, getTodayPick, getRecentRecommendations } from "@/lib/recommendations";
 import { useRecentItems } from "@/hooks/useRecentItems";
 
 export default function HomePage() {
   const today = getTodayPick();
   const { recentItems } = useRecentItems();
   const recentCompares = getRecentRecommendations(recentItems);
-  const recommendedComparisons = comparisons.slice(0, 4);
+  const recommendedComparisons = getFeaturedComparisons().slice(0, 4);
 
   return (
     <div>
