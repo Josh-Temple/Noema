@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import SearchPage from "@/app/search/page";
+import SearchPage from "./page";
 
 describe("search page", () => {
   it("renders grouped search headings", () => {

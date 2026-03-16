@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import ComparePage from "@/app/compare/[left]/[right]/page";
+import ComparePage from "./page";
 
 describe("compare detail page", () => {
   it("renders comparison content for a valid thinker pair", () => {

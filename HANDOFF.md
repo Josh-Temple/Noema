@@ -2,39 +2,70 @@
 
 ## Session objective
 
-Applied a practical polish pass based on the latest checklist:
+Implemented Sprint 3 content expansion: **Ancient Ethics Pack / 古代倫理パック**.
 
-1. keep README/HANDOFF/public product description in sync,
-2. strengthen home recommendations,
-3. make comparison-section reading grain more consistent,
-4. make thinker pages function more clearly as hubs back to comparisons.
+This sprint stayed tightly scoped to content + linking (no UI redesign, no platform features).
 
-## What changed in this pass
+## What Sprint 3 added
 
-- Home (`/`) now presents **four recommended comparisons** (instead of two) and adds helper description text for first-time use.
-- Comparison section cards now use explicit left/right labels and a standardized “差分の要点” line to stabilize reading rhythm across blocks.
-- Thinker pages now surface related comparisons with stronger visual hierarchy:
-  - heading metadata (“start from the top” guidance),
-  - “推奨” badges on the first two related comparison links.
-- README refreshed to keep repository/public navigation wording aligned with the currently deployed comparison-first app.
+### New thinkers
 
-## Active implementation confirmation
+- Epicurus (`epicurus`)
+- Zeno of Citium (`zeno`)
+- Epictetus (`epictetus`)
+- Marcus Aurelius (`marcus-aurelius`)
 
-- Active runtime path: `app/` + `src/`
-- Active deploy target: repository root (Vercel Next.js)
-- Legacy archive only: `legacy/wave2-static/`
+### New comparisons
 
-## Checks run this session
+- `stoicism-epicureanism` (ストア派 vs エピクロス派)
+- `aristotle-stoicism` (アリストテレス vs ストア派)
+- `plato-epicurus` (プラトン vs エピクロス)
+- `epictetus-epicurus` (エピクテトス vs エピクロス)
+- `marcus-epictetus` (マルクス・アウレリウス vs エピクテトス)
 
+## Pathway and relation integration
+
+- Updated ancient core links so users can move naturally from:
+  - Plato → Aristotle → Stoicism / Epicureanism
+- Updated existing thinker relations (especially Plato/Aristotle and newly added Stoic/Epicurean entries) so new content is not isolated.
+- Added practical stepping links across all new comparison pages (`nextThinkerSlugs`, `nextComparisonSlugs`, `nextThemeSlugs`).
+
+## Theme integration
+
+- Strengthened `happiness` and `freedom` pathways with multiple ancient ethics comparisons.
+- Added lightweight secondary theme: `human-nature` (人間とは何か).
+- Updated starter guidance to improve beginner entry paths.
+
+## Home/discovery integration
+
+- Updated featured comparison curation to surface ancient ethics comparisons on home.
+- Recent recommendation fallback now includes ancient ethics entries so Sprint 3 content does not get buried.
+
+## Validation and tests
+
+Updated tests for:
+- new thinker lookup (`epicurus`, `marcus-aurelius`)
+- new comparison lookup (`stoicism-epicureanism`, `epictetus-epicurus`, `marcus-epictetus`)
+- theme relation resolution (`human-nature`, `happiness` routes)
+- home recommendation visibility for ancient ethics
+
+Checks run and passing:
 - `npm run lint`
+- `npm run typecheck`
 - `npm run test`
 - `npm run build`
 
-## Next suggested tasks
+## Suggested Sprint 4
 
-1. Expand recommendation logic from simple list slicing to score-based ranking (recent views + theme affinity).
-2. Add persistence verification e2e for save flows:
-   - save action immediate reflection,
-   - persisted after reload,
-   - visible on `/saved`.
-3. Improve search result grouping readability with explicit section counts and empty-state hints.
+Likely next: **20th Century Bridge Pack / 20世紀橋渡しパック**.
+
+Candidate focus:
+- Heidegger
+- Husserl
+- Beauvoir
+- Arendt
+
+Goal:
+- thicken the bridge toward modern/existential/political 20th-century comparisons,
+- connect naturally from existing Sartre/Nietzsche and political pathways,
+- preserve Noema’s concise comparison-first reading flow.

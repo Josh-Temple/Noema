@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import ThinkerPage from "@/app/thinkers/[slug]/page";
+import ThinkerPage from "./page";
 
 describe("thinker detail page", () => {
   it("renders thinker content for a valid slug", () => {
