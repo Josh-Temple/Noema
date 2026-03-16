@@ -7,5 +7,6 @@ describe("compare detail page", () => {
 
     expect(screen.getByRole("heading", { name: "合理主義 vs 経験主義" })).toBeInTheDocument();
     expect(screen.getByText("次の一歩")).toBeInTheDocument();
+    expect(screen.getByText("次に見ると流れがつかみやすい")).toBeInTheDocument();
   });
 });

@@ -6,8 +6,8 @@ import { CommonGroundCard } from "@/components/compare/CommonGroundCard";
 import { ComparisonSectionCard } from "@/components/compare/ComparisonSectionCard";
 import { NextStepCard } from "@/components/compare/NextStepCard";
 import { RecentTracker } from "@/components/common/RecentTracker";
-import { getComparisonBySlug, getComparisonByThinkerPair, getThemeBySlug, getThinkerBySlug } from "@/lib/content";
-import { comparisonPath, themePath, thinkerPath } from "@/lib/routes";
+import { getComparisonByThinkerPair, getThinkerBySlug } from "@/lib/content";
+import { getCompareNextStepSuggestions } from "@/lib/recommendations";
 
 export default function ComparePage({ params }: { params: { left: string; right: string } }) {
   const comparison = getComparisonByThinkerPair(params.left, params.right);
@@ -32,21 +32,9 @@ export default function ComparePage({ params }: { params: { left: string; right:
         <h3 id="next-step-heading" className="mb-2 text-2xl font-bold">
           次の一歩
         </h3>
-        {comparison.nextThinkerSlugs.map((slug) => {
-          const thinker = getThinkerBySlug(slug);
-          if (!thinker) return null;
-          return <NextStepCard key={slug} title={`思想家: ${thinker.nameJa}`} href={thinkerPath(slug)} />;
-        })}
-        {comparison.nextComparisonSlugs.map((slug) => {
-          const next = getComparisonBySlug(slug);
-          if (!next) return null;
-          return <NextStepCard key={slug} title={`比較: ${next.titleJa}`} href={comparisonPath(next.leftThinkerSlug, next.rightThinkerSlug)} />;
-        })}
-        {comparison.nextThemeSlugs.map((slug) => {
-          const theme = getThemeBySlug(slug);
-          if (!theme) return null;
-          return <NextStepCard key={slug} title={`テーマ: ${theme.titleJa}`} href={themePath(slug)} />;
-        })}
+        {getCompareNextStepSuggestions(comparison.slug).map((item) => (
+          <NextStepCard key={item.href} title={item.title} subtitle={item.reason} href={item.href} />
+        ))}
       </section>
     </div>
   );

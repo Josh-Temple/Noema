@@ -13,6 +13,8 @@ describe("content helpers", () => {
     expect(getThinkerBySlug("kant")?.nameEn).toBe("Immanuel Kant");
     expect(getThinkerBySlug("epicurus")?.nameJa).toBe("エピクロス");
     expect(getThinkerBySlug("marcus-aurelius")?.nameJa).toBe("マルクス・アウレリウス");
+    expect(getThinkerBySlug("heidegger")?.nameEn).toBe("Martin Heidegger");
+    expect(getThinkerBySlug("arendt")?.nameJa).toBe("ハンナ・アーレント");
   });
 
   it("finds comparison regardless of pair order", () => {
@@ -22,22 +24,22 @@ describe("content helpers", () => {
     expect(reverse?.slug).toBe("descartes-hume");
   });
 
-  it("looks up newly added ancient ethics comparisons", () => {
-    expect(getComparisonByThinkerPair("zeno", "epicurus")?.slug).toBe("stoicism-epicureanism");
-    expect(getComparisonByThinkerPair("epictetus", "epicurus")?.slug).toBe("epictetus-epicurus");
-    expect(getComparisonBySlug("marcus-epictetus")?.titleJa).toBe("マルクス・アウレリウス vs エピクテトス");
+  it("looks up newly added bridge comparisons", () => {
+    expect(getComparisonByThinkerPair("husserl", "heidegger")?.slug).toBe("husserl-heidegger");
+    expect(getComparisonByThinkerPair("sartre", "beauvoir")?.slug).toBe("sartre-beauvoir");
+    expect(getComparisonBySlug("foucault-arendt")?.titleJa).toBe("フーコー vs アーレント");
   });
 
   it("returns thinker comparisons and themes", () => {
-    expect(getComparisonsForThinker("epictetus").length).toBeGreaterThanOrEqual(2);
-    expect(getThemesForThinker("epictetus").some((theme) => theme.slug === "happiness")).toBe(true);
+    expect(getComparisonsForThinker("sartre").length).toBeGreaterThanOrEqual(3);
+    expect(getThemesForThinker("arendt").some((theme) => theme.slug === "society-power")).toBe(true);
   });
 
-  it("gets theme by slug and resolves ancient pathways", () => {
+  it("gets theme by slug and resolves bridge pathways", () => {
     expect(getThemeBySlug("freedom")?.titleEn).toBe("Freedom");
-    expect(getThemeBySlug("human-nature")?.titleJa).toBe("人間とは何か");
+    expect(getThemeBySlug("society-power")?.titleJa).toBe("社会と権力はどう成り立つか");
 
-    const happinessComparisons = getComparisonsForTheme("happiness").map((comparison) => comparison.slug);
-    expect(happinessComparisons).toEqual(expect.arrayContaining(["stoicism-epicureanism", "aristotle-stoicism", "epictetus-epicurus"]));
+    const humanComparisons = getComparisonsForTheme("human-nature").map((comparison) => comparison.slug);
+    expect(humanComparisons).toEqual(expect.arrayContaining(["husserl-heidegger", "heidegger-sartre", "sartre-beauvoir"]));
   });
 });

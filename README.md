@@ -63,6 +63,12 @@ npm run build
 - Ancient Ethics Pack (古代倫理パック):
   - Added ancient ethics corridor links around Plato / Aristotle / Stoicism / Epicureanism
   - Added practical pathways for “善く生きるとは何か” and “自由とは何か” through Stoic and Epicurean comparisons
+- 20th-Century Bridge Pack (20世紀橋渡しパック):
+  - Added Husserl / Heidegger / Beauvoir / Arendt and bridge comparisons from Nietzsche / Sartre / Marx / Foucault routes
+  - Strengthened curation and discovery so phenomenology / existentialism / political-thought pathways are visible from home, themes, and recommendations
+- Search & Recommendation Upgrade (検索・推薦の賢化):
+  - Upgraded local search relevance with alias support and better matching across thinker/theme/comparison metadata
+  - Made recommendations more context-aware using local recent/saved signals while keeping deterministic local-only behavior
 
 ## Content model
 

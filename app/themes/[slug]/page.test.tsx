@@ -9,11 +9,11 @@ describe("theme detail page", () => {
     expect(screen.getByText("まずデカルト vs ロックで入口を掴み、ロック vs ヒューム、ヒューム vs カントへ進む。")).toBeInTheDocument();
   });
 
-  it("renders happiness pathways with ancient ethics comparisons", () => {
-    render(<ThemePage params={{ slug: "happiness" }} />);
+  it("renders society-power pathways with bridge comparisons", () => {
+    render(<ThemePage params={{ slug: "society-power" }} />);
 
-    expect(screen.getByRole("heading", { name: "幸福" })).toBeInTheDocument();
-    expect(screen.getByText("ストア派 vs エピクロス派")).toBeInTheDocument();
-    expect(screen.getByText("エピクテトス vs エピクロス")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "社会と権力はどう成り立つか" })).toBeInTheDocument();
+    expect(screen.getByText("アーレント vs マルクス")).toBeInTheDocument();
+    expect(screen.getByText("フーコー vs アーレント")).toBeInTheDocument();
   });
 });

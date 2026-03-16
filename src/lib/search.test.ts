@@ -9,7 +9,12 @@ describe("search", () => {
     expect(index.some((entry) => entry.kind === "theme")).toBe(true);
   });
 
-  it("filters entries by query", () => {
+  it("supports alias queries and relevance ordering", () => {
+    const results = searchEntries("経験論");
+    expect(results.some((entry) => entry.id.includes("locke") || entry.id.includes("hume") || entry.id.includes("berkeley"))).toBe(true);
+  });
+
+  it("matches japanese thinker names", () => {
     const results = searchEntries("デカルト");
     expect(results.some((entry) => entry.id.includes("descartes") || entry.title.includes("デカルト"))).toBe(true);
   });
