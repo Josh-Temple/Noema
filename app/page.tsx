@@ -10,18 +10,20 @@ import { comparisons, themes } from "@/lib/content";
 import { comparisonPath, thinkerPath } from "@/lib/routes";
 import { getFeaturedComparisons, getTodayPick, getRecentRecommendations } from "@/lib/recommendations";
 import { useRecentItems } from "@/hooks/useRecentItems";
+import { useSavedItems } from "@/hooks/useSavedItems";
 
 export default function HomePage() {
-  const today = getTodayPick();
   const { recentItems } = useRecentItems();
-  const recentCompares = getRecentRecommendations(recentItems);
-  const recommendedComparisons = getFeaturedComparisons().slice(0, 4);
+  const { savedItems } = useSavedItems();
+  const today = getTodayPick({ recent: recentItems, saved: savedItems });
+  const recentCompares = getRecentRecommendations(recentItems, savedItems);
+  const recommendedComparisons = getFeaturedComparisons({ recent: recentItems, saved: savedItems, limit: 4 });
 
   return (
     <div>
       <SearchBar />
       <section className="mb-6">
-        <SectionTitle title="おすすめ比較" description="まずはここから。短時間で軸の違いをつかめる比較を並べています。" />
+        <SectionTitle title="おすすめ比較" description="まずはここから。保存・最近見た項目をもとに、読みやすい比較を並べています。" />
         {recommendedComparisons.map((item, index) => (
           <RecommendedComparisonCard key={item.slug} item={item} primary={index === 0} />
         ))}
@@ -33,7 +35,7 @@ export default function HomePage() {
       </section>
 
       <section className="mb-6">
-        <SectionTitle title="任せる" description="日付ベースで毎日同じ提案を表示します。" />
+        <SectionTitle title="任せる" description="日替わり提案に、最近見た流れを少し反映します。" />
         <RecentItemCard title={`今日の思想家: ${today.thinker.nameJa}`} subtitle={today.thinker.oneLiner} href={thinkerPath(today.thinker.slug)} />
         <RecentItemCard title={`今日の比較: ${today.comparison.titleJa}`} subtitle={today.comparison.subtitle} href={comparisonPath(today.comparison.leftThinkerSlug, today.comparison.rightThinkerSlug)} />
         <RecentItemCard title={`今日のテーマ: ${today.theme.titleJa}`} subtitle={today.theme.shortDescription} href={`/themes/${today.theme.slug}`} />

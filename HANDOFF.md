@@ -2,70 +2,85 @@
 
 ## Session objective
 
-Implemented Sprint 3 content expansion: **Ancient Ethics Pack / 古代倫理パック**.
+Implemented Sprint 5: **Search & Recommendation Upgrade / 検索・推薦の賢化**.
 
-This sprint stayed tightly scoped to content + linking (no UI redesign, no platform features).
+This sprint stayed focused on discovery quality improvements (search relevance + recommendation quality), with no visual redesign and no backend expansion.
 
-## What Sprint 3 added
+## What changed in search
 
-### New thinkers
+- Reworked local search scoring to improve relevance ordering by field weight:
+  - title prefix/title matches
+  - subtitle matches
+  - keyword/id matches
+- Expanded search keywords for each entry type:
+  - thinkers now include key concepts, key works, and related themes
+  - comparisons now include both thinker names, themes, and watch points
+  - themes now include slug/title/starter guidance and linked nodes
+- Added lightweight alias/synonym expansion for common query intents, including:
+  - 功利主義
+  - 経験論
+  - 合理論
+  - 自由
+  - 国家
+  - 実存
+  - 現象学
+- Added no-result handling on `/search` with a calm empty state and starter suggestions to avoid dead ends.
 
-- Epicurus (`epicurus`)
-- Zeno of Citium (`zeno`)
-- Epictetus (`epictetus`)
-- Marcus Aurelius (`marcus-aurelius`)
+## What changed in recommendations
 
-### New comparisons
+- Refactored recommendation logic into richer deterministic helpers in `src/lib/recommendations.ts`.
+- Home recommendation blend now combines:
+  - editorial pinned comparisons
+  - recent/saved context signals
+  - small deterministic rotation for variety
+- `任せる` (daily picks) now lightly reflects user context via the same recommendation layer.
+- Thinker page recommendation quality improved by:
+  - prioritizing explicit `relatedComparisonSlugs`
+  - then scoring fallbacks via shared themes
+  - improved next-thinker ranking via shared relations/themes
+- Theme comparison ordering now prioritizes theme-specific editorial relations before fallback theme coverage.
+- Compare-page “次の一歩” now uses labeled suggestion reasons (e.g. flow continuation, alternate route, deeper theme view).
 
-- `stoicism-epicureanism` (ストア派 vs エピクロス派)
-- `aristotle-stoicism` (アリストテレス vs ストア派)
-- `plato-epicurus` (プラトン vs エピクロス)
-- `epictetus-epicurus` (エピクテトス vs エピクロス)
-- `marcus-epictetus` (マルクス・アウレリウス vs エピクテトス)
+## How saved/recent state is now used
 
-## Pathway and relation integration
+- Home recommendation scoring now reads both recent and saved local items.
+- Signal extraction includes cross-expansion from stored items:
+  - saved/recent comparisons -> thinker/theme signals
+  - saved/recent thinkers -> theme signals
+  - saved/recent themes -> direct theme signals
+- These signals deterministically boost related comparisons (no black-box/ML).
 
-- Updated ancient core links so users can move naturally from:
-  - Plato → Aristotle → Stoicism / Epicureanism
-- Updated existing thinker relations (especially Plato/Aristotle and newly added Stoic/Epicurean entries) so new content is not isolated.
-- Added practical stepping links across all new comparison pages (`nextThinkerSlugs`, `nextComparisonSlugs`, `nextThemeSlugs`).
+## Editorial assumptions / ranking heuristics
 
-## Theme integration
-
-- Strengthened `happiness` and `freedom` pathways with multiple ancient ethics comparisons.
-- Added lightweight secondary theme: `human-nature` (人間とは何か).
-- Updated starter guidance to improve beginner entry paths.
-
-## Home/discovery integration
-
-- Updated featured comparison curation to surface ancient ethics comparisons on home.
-- Recent recommendation fallback now includes ancient ethics entries so Sprint 3 content does not get buried.
+- Keep recommendation output calm and small (short lists, no walls).
+- Prefer pathway continuity over novelty spikes:
+  - recent/saved context boosts > pinned-only ordering
+  - pinned items still remain as stable fallback anchors
+- Search alias map is intentionally lightweight and maintainable (small local dictionary).
 
 ## Validation and tests
 
-Updated tests for:
-- new thinker lookup (`epicurus`, `marcus-aurelius`)
-- new comparison lookup (`stoicism-epicureanism`, `epictetus-epicurus`, `marcus-epictetus`)
-- theme relation resolution (`human-nature`, `happiness` routes)
-- home recommendation visibility for ancient ethics
+Updated or added tests for:
 
-Checks run and passing:
+- search relevance + alias behavior
+- search page no-result UX
+- recommendation context use (recent/saved-aware)
+- thinker recommendation prioritization
+- compare next-step reason labeling
+
+Run and pass:
+
 - `npm run lint`
 - `npm run typecheck`
 - `npm run test`
 - `npm run build`
 
-## Suggested Sprint 4
+## Suggested Sprint 6
 
-Likely next: **20th Century Bridge Pack / 20世紀橋渡しパック**.
+Recommended next sprint: **East Asian comparison network expansion (small-scope)**.
 
-Candidate focus:
-- Heidegger
-- Husserl
-- Beauvoir
-- Arendt
+Suggested shape:
 
-Goal:
-- thicken the bridge toward modern/existential/political 20th-century comparisons,
-- connect naturally from existing Sartre/Nietzsche and political pathways,
-- preserve Noema’s concise comparison-first reading flow.
+- keep additions narrow (2–4 thinkers, 3–5 comparisons max)
+- reuse Sprint 5 recommendation/search scaffolding so new content is discoverable immediately
+- prioritize bridge comparisons that connect to existing ethics/politics/human-nature themes instead of standalone clusters
