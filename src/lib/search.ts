@@ -10,6 +10,13 @@ const searchAliases: Record<string, string[]> = {
   国家: ["hobbes", "locke", "rousseau", "rawls", "marx", "state-legitimacy", "社会と権力はどう成り立つか"],
   実存: ["sartre", "heidegger", "beauvoir", "nietzsche-sartre"],
   現象学: ["husserl", "heidegger", "husserl-heidegger"],
+  儒家: ["confucius", "mencius", "confucius-mencius", "state-legitimacy", "human-nature"],
+  道家: ["laozi", "zhuangzi", "confucius-laozi", "laozi-zhuangzi", "自由"],
+  東洋思想: ["confucius", "laozi", "mencius", "zhuangzi", "xunzi", "mozi", "hanfeizi", "mencius-xunzi", "happiness"],
+  法家: ["hanfeizi", "xunzi-hanfeizi", "hanfeizi-hobbes", "state-legitimacy"],
+  墨家: ["mozi", "confucius-mozi", "mozi-mencius", "justice"],
+  性善説: ["mencius", "mencius-xunzi", "human-nature"],
+  性悪説: ["xunzi", "mencius-xunzi", "xunzi-hanfeizi", "human-nature"],
 };
 
 const normalize = (value: string) => value.toLowerCase().trim();
