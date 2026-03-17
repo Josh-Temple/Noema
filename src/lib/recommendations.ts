@@ -14,12 +14,15 @@ const pick = <T,>(items: T[], offset = 0): T => {
 
 const editorialPinnedComparisonSlugs = [
   "husserl-heidegger",
+  "mencius-xunzi",
+  "hanfeizi-hobbes",
   "sartre-beauvoir",
   "arendt-marx",
   "heidegger-sartre",
   "foucault-arendt",
   "rawls-marx",
   "stoicism-epicureanism",
+  "confucius-laozi",
 ];
 
 const getEditorialPinnedComparisons = () => {
@@ -102,7 +105,7 @@ export const getFeaturedComparisons = ({ recent = [], saved = [], limit = 4 }: {
     .sort((a, b) => b.score - a.score || a.item.slug.localeCompare(b.item.slug))
     .map((entry) => entry.item);
 
-  return uniqBySlug([...scored, ...pinned]).slice(0, limit);
+  return uniqBySlug([...pinned, ...scored]).slice(0, limit);
 };
 
 export const getTodayPick = ({ recent = [], saved = [] }: { recent?: StoredItem[]; saved?: StoredItem[] } = {}) => {

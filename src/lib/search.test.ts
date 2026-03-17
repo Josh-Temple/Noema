@@ -18,4 +18,14 @@ describe("search", () => {
     const results = searchEntries("デカルト");
     expect(results.some((entry) => entry.id.includes("descartes") || entry.title.includes("デカルト"))).toBe(true);
   });
+
+  it("supports east asian starter aliases", () => {
+    const results = searchEntries("東洋思想");
+    expect(results.some((entry) => entry.id.includes("confucius") || entry.id.includes("laozi") || entry.id.includes("mencius") || entry.id.includes("zhuangzi"))).toBe(true);
+  });
+
+  it("supports east asian second-wave aliases", () => {
+    const results = searchEntries("性悪説");
+    expect(results.some((entry) => entry.id.includes("xunzi") || entry.id.includes("xunzi-hanfeizi") || entry.id.includes("mencius-xunzi"))).toBe(true);
+  });
 });

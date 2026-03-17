@@ -69,6 +69,14 @@ npm run build
 - Search & Recommendation Upgrade (検索・推薦の賢化):
   - Upgraded local search relevance with alias support and better matching across thinker/theme/comparison metadata
   - Made recommendations more context-aware using local recent/saved signals while keeping deterministic local-only behavior
+- East Asian Starter Pack (東洋思想スターターパック):
+  - Strengthened East Asian corridor around Confucius / Laozi and added Mencius / Zhuangzi with relation-rich pathways
+  - Added focused comparisons for East Asian entry and one bridge comparison (Confucius vs Aristotle) into the existing network
+  - Integrated entrypoints into happiness / state legitimacy / human nature themes and recommendation/search visibility
+- East Asian Thought Pack II (東洋思想パック第二弾):
+  - Added Xunzi / Mozi / Han Feizi to deepen contrasts around human nature, order, and statecraft
+  - Added second-layer comparison corridor (Mencius vs Xunzi, Confucius vs Mozi, Xunzi vs Han Feizi, Mozi vs Mencius)
+  - Added one careful bridge comparison (Han Feizi vs Hobbes) to connect East Asian statecraft debates into existing politics pathways
 
 ## Content model
 
