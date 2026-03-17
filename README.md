@@ -27,6 +27,7 @@ There are no competing root-level static entrypoints. Vercel should deploy the r
 - Next.js 14 App Router + TypeScript + Tailwind CSS
 - Local typed content modules in `src/content`
 - Shared storage helpers in `src/lib/storage.ts` + hooks in `src/hooks`
+- UI clarity layer (Sprint 8): lightweight inline SVG icon system for nav/search/saved/recommendation scanability
 
 ## Local development
 

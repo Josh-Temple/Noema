@@ -5,6 +5,7 @@ import { SearchInput } from "@/components/search/SearchInput";
 import { SearchResultGroup } from "@/components/search/SearchResultGroup";
 import { SearchResultCard } from "@/components/search/SearchResultCard";
 import { EmptyState } from "@/components/common/EmptyState";
+import { CompassIcon, SearchIcon } from "@/components/common/icons";
 import { getSearchStarterSuggestions, searchEntries } from "@/lib/search";
 
 export default function SearchPage() {
@@ -19,10 +20,13 @@ export default function SearchPage() {
 
       {isNoResult ? (
         <section className="mb-4" aria-label="検索の空結果">
-          <EmptyState title="検索結果が見つかりません" body="語を短くするか、下の入口比較・テーマから始めるのがおすすめです。" />
-          <h2 className="mb-2 mt-4 text-2xl font-bold">最初に見るなら</h2>
+          <EmptyState icon={<SearchIcon className="h-6 w-6" />} title="検索結果が見つかりません" body="語を短くするか、下の入口比較・テーマから始めるのがおすすめです。" />
+          <h2 className="mb-2 mt-4 flex items-center gap-2 text-2xl font-bold">
+            <CompassIcon className="h-5 w-5 text-noema-accent" />
+            <span>最初に見るなら</span>
+          </h2>
           {starterSuggestions.map((entry) => (
-            <SearchResultCard key={entry.id} title={entry.title} subtitle={entry.subtitle} href={entry.href} />
+            <SearchResultCard key={entry.id} kind={entry.kind} title={entry.title} subtitle={entry.subtitle} href={entry.href} />
           ))}
         </section>
       ) : (

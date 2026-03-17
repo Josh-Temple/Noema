@@ -2,71 +2,58 @@
 
 ## Session objective
 
-Implemented Sprint 7: **East Asian Thought Pack II — Order, Human Nature, and Statecraft / 東洋思想パック第二弾 — 秩序・人間観・統治**.
+Implemented Sprint 8: **Iconography & Surface Clarity Pass / アイコン導入と表層導線の整理**.
 
-This sprint deepened the East Asian comparison network as a second layer (not a broad expansion), centered on human nature, order formation, and political rule.
+This sprint focused on scanability and orientation (not redesign), while preserving Noema's calm comparison-first UI.
 
-## Sprint precondition check
+## What changed in UI/iconography
 
-- Confirmed Sprint 6 starter corridor was already present in active content:
-  - 孔子 / 老子 / 孟子 / 荘子
-  - starter comparisons around these nodes
-- Proceeded with second-layer additions based on that active foundation.
+### Navigation and primary entry
 
-## What changed in thinkers
+- Bottom navigation is now icon-assisted (`ホーム / 検索 / 比較 / 保存済み`) with icon + label and clearer active state.
+- Home search entry was upgraded from text-only into an input-like search card with search icon and supporting guidance copy.
 
-Added three new second-layer thinkers:
+### Home surface clarity
 
-- 荀子 (Xunzi)
-- 墨子 (Mozi)
-- 韓非子 (Han Feizi)
+- Added restrained section icons for:
+  - おすすめ比較
+  - テーマ
+  - 任せる
+  - 最近見た項目の近く
+- Added type/utility icon treatment on discovery and daily recommendation cards.
+- Theme chips now include a small icon to improve quick scanning.
 
-Updated relation fields across new and existing nodes to integrate pathways:
+### Search surface clarity
 
-- Existing East Asian nodes updated where needed:
-  - 孔子
-  - 孟子
-- Western bridge-side relation updated:
-  - ホッブズ
+- Search input now has icon-assisted label/field affordance.
+- Group headers for 比較 / 思想家 / テーマ are icon-assisted.
+- Search result cards now show compact type badges (comparison/thinker/theme) with icons.
+- Empty state and starter suggestions now include icon-assisted guidance.
 
-## What changed in comparisons
+### Saved/bookmark consistency
 
-Added second-layer comparison set:
+- Save toggle buttons now use icon + label consistently across comparison/thinker/theme pages.
+- Saved list cards now include type badges and clearer “open” affordance.
+- Saved page header now includes icon treatment.
 
-- `mencius-xunzi` (孟子 vs 荀子)
-- `confucius-mozi` (孔子 vs 墨子)
-- `xunzi-hanfeizi` (荀子 vs 韓非子)
-- `mozi-mencius` (墨子 vs 孟子)
+### Recommendation/next-step cards
 
-Added one careful cross-network bridge comparison:
+- `NextStepCard` now includes type-aware icon badges (比較 / 思想家 / テーマ) inferred from link targets.
+- Applied across compare/theme/thinker recommendation surfaces via shared component.
 
-- `hanfeizi-hobbes` (韓非子 vs ホッブズ)
+## Icon system choice
 
-Also tuned next-step links so these comparisons form a readable corridor rather than isolated entries.
+- Added a lightweight local icon set in `src/components/common/icons.tsx` (inline SVG React components).
+- Rationale:
+  - no external icon dependency needed
+  - consistent stroke/size treatment
+  - low bundle risk and tight visual control
 
-## Theme integration updates
+## README synchronization completed
 
-Strengthened existing themes with East Asian second-layer entrypoints:
-
-- `state-legitimacy`
-- `human-nature`
-- `happiness`
-- `society-power` (secondary, only where natural)
-
-Updated related thinkers/comparisons and starter guidance to:
-
-- expose second-wave East Asian comparisons clearly
-- preserve links back into existing Western ethics/politics pathways
-
-## Discovery, recommendation, and search updates
-
-- Recommendation curation now includes second-wave East Asian comparisons as editorial pinned candidates (including bridge visibility).
-- Search alias expansion now covers second-wave intents and terms, including:
-  - 法家
-  - 墨家
-  - 性善説
-  - 性悪説
-- Home-page test expectation updated to ensure second-wave East Asian comparisons are visible in recommended surface.
+- Confirmed README “Current content focus” already reflects the actual content state including:
+  - East Asian Thought Pack II (`荀子 / 墨子 / 韓非子` and `韓非子 vs ホッブズ` bridge)
+- Added Sprint 8 UI note to README to reflect current product-layer progress.
 
 ## Validation and tests run
 
@@ -77,12 +64,21 @@ Executed and passing:
 - `npm run test`
 - `npm run build`
 
-## Suggested Sprint 8
+## Remaining UI consistency debt
 
-Two strong next options:
+- Some older card surfaces still rely on text hierarchy more than icon hierarchy and could be normalized further.
+- Theme slug rendering in comparison hero chips remains slug-based text (intentional in this sprint to avoid taxonomy/editorial refactor).
+- Recommendation reason text styling could be unified across home/search/next-step surfaces.
 
-1. **Careful bridge expansion pack (content)**
-   - Add a small Buddhism/Japanese-thought bridge corridor (strictly scoped, comparison-first).
+## Suggested Sprint 9
 
-2. **Lightweight learning flow sprint (product curation)**
-   - Use saved/recent behavior to improve revisit pathways and “continue where you left off” guidance without adding heavy quiz/SRS systems.
+Preferred next step:
+
+1. **Saved/Recent lightweight learning flow** (priority)
+   - Improve “continue where you left off” pathways from saved/recent context.
+   - Add concise revisit prompts and progression nudges without adding heavy quiz/SRS.
+
+Secondary option:
+
+2. **Recommendation rebalance pass**
+   - Rebalance 20th-century bridge + East Asian wave II exposure on home/search recommendation surfaces.
