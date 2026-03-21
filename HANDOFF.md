@@ -2,83 +2,62 @@
 
 ## Session objective
 
-Implemented Sprint 8: **Iconography & Surface Clarity Pass / アイコン導入と表層導線の整理**.
+Verified whether the app was already a PWA, implemented baseline PWA support, and then adjusted the implementation to exclude binary assets from the repository.
 
-This sprint focused on scanability and orientation (not redesign), while preserving Noema's calm comparison-first UI.
+## PWA status before this session
 
-## What changed in UI/iconography
+- The app was **not** a complete PWA.
+- There was no Web App Manifest, no service worker registration, and no installable app icon set.
 
-### Navigation and primary entry
+## What changed
 
-- Bottom navigation is now icon-assisted (`ホーム / 検索 / 比較 / 保存済み`) with icon + label and clearer active state.
-- Home search entry was upgraded from text-only into an input-like search card with search icon and supporting guidance copy.
+### PWA foundation
 
-### Home surface clarity
+- Added `app/manifest.ts` with standalone display mode, theme/background colors, and SVG-based icon declarations.
+- Added `public/icon.svg` as the single repository-tracked PWA icon asset.
+- Added `public/sw.js` service worker with:
+  - app shell precaching
+  - same-origin GET response caching
+  - navigation fallback to cached `/` when offline
+- Added `src/components/pwa/PwaRegistrar.tsx` and mounted it in `app/layout.tsx` so the service worker registers on the client.
+- Extended metadata in `app/layout.tsx` for manifest, icons, Apple web app support, and theme color.
 
-- Added restrained section icons for:
-  - おすすめ比較
-  - テーマ
-  - 任せる
-  - 最近見た項目の近く
-- Added type/utility icon treatment on discovery and daily recommendation cards.
-- Theme chips now include a small icon to improve quick scanning.
+### Binary asset rollback
 
-### Search surface clarity
+- Removed previously added binary PNG icon files from the repository because binary files must not be included in the PR.
+- Updated manifest, metadata, and service worker precache entries to reference `icon.svg` only.
 
-- Search input now has icon-assisted label/field affordance.
-- Group headers for 比較 / 思想家 / テーマ are icon-assisted.
-- Search result cards now show compact type badges (comparison/thinker/theme) with icons.
-- Empty state and starter suggestions now include icon-assisted guidance.
+## Removed binary file details
 
-### Saved/bookmark consistency
+The removed binary files were generated app icon assets for installation surfaces:
 
-- Save toggle buttons now use icon + label consistently across comparison/thinker/theme pages.
-- Saved list cards now include type badges and clearer “open” affordance.
-- Saved page header now includes icon treatment.
+- `public/icon-192.png`: 192×192 PNG app icon
+- `public/icon-512.png`: 512×512 PNG app icon
+- `public/apple-touch-icon.png`: 180×180 Apple touch icon PNG
 
-### Recommendation/next-step cards
-
-- `NextStepCard` now includes type-aware icon badges (比較 / 思想家 / テーマ) inferred from link targets.
-- Applied across compare/theme/thinker recommendation surfaces via shared component.
-
-## Icon system choice
-
-- Added a lightweight local icon set in `src/components/common/icons.tsx` (inline SVG React components).
-- Rationale:
-  - no external icon dependency needed
-  - consistent stroke/size treatment
-  - low bundle risk and tight visual control
+They all used the same Noema-branded mark: a dark indigo background, a rounded darker inner panel, and a stylized “N”-like line motif in off-white and blue.
 
 ## README synchronization completed
 
-- Confirmed README “Current content focus” already reflects the actual content state including:
-  - East Asian Thought Pack II (`荀子 / 墨子 / 韓非子` and `韓非子 vs ホッブズ` bridge)
-- Added Sprint 8 UI note to README to reflect current product-layer progress.
+- Updated the PWA section to reflect the SVG-only icon approach.
 
 ## Validation and tests run
 
-Executed and passing:
+Executed during this session:
 
 - `npm run lint`
 - `npm run typecheck`
 - `npm run test`
 - `npm run build`
 
-## Remaining UI consistency debt
+## Remaining follow-up ideas
 
-- Some older card surfaces still rely on text hierarchy more than icon hierarchy and could be normalized further.
-- Theme slug rendering in comparison hero chips remains slug-based text (intentional in this sprint to avoid taxonomy/editorial refactor).
-- Recommendation reason text styling could be unified across home/search/next-step surfaces.
+- Consider adding an explicit offline page instead of falling back to cached `/`.
+- If stricter platform compatibility is required later, decide on an external artifact pipeline for generated PNG icons rather than committing binaries to this repo.
+- If install promotion becomes important, add a custom install prompt UI using `beforeinstallprompt`.
 
-## Suggested Sprint 9
+## Suggested next step
 
-Preferred next step:
-
-1. **Saved/Recent lightweight learning flow** (priority)
-   - Improve “continue where you left off” pathways from saved/recent context.
-   - Add concise revisit prompts and progression nudges without adding heavy quiz/SRS.
-
-Secondary option:
-
-2. **Recommendation rebalance pass**
-   - Rebalance 20th-century bridge + East Asian wave II exposure on home/search recommendation surfaces.
+1. **Offline UX refinement**
+   - Add a dedicated offline route/message for uncached navigations.
+   - Decide which dynamic routes should be warmed into cache beyond the current app shell.
