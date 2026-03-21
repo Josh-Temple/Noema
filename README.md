@@ -52,6 +52,12 @@ npm run build
 - Start command: `npm run start`
 - Required environment variables: none
 
+## PWA support
+
+- The app now ships with a Web App Manifest (`app/manifest.ts`), a text-based SVG app icon in `public/icon.svg`, and a client-registered service worker (`public/sw.js`).
+- The service worker caches the app shell and same-origin GET requests to provide installability plus basic offline revisit support for previously visited pages.
+- PWA metadata is configured in `app/layout.tsx` for installability without committing binary assets to the repository.
+
 
 ## Current content focus
 
