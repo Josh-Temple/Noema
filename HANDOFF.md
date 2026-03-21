@@ -1,63 +1,102 @@
 # Noema Wave 4 Handoff
 
-## Session objective
+## Current product state
 
-Verified whether the app was already a PWA, implemented baseline PWA support, and then adjusted the implementation to exclude binary assets from the repository.
+Noema is now a single root-level Next.js App Router application focused on comparison-first philosophy learning. The current product already includes the major content expansion waves described in `README.md` (modern epistemology, ethics/politics, ancient ethics, 20th-century bridges, search/recommendation upgrades, and East Asian Thought Pack II) plus baseline PWA support.
 
-## PWA status before this session
+Sprint 9 shifted the product emphasis from adding another large content pack to improving lightweight revisit behavior. The app should now feel more like a calm place to return to for a one-minute philosophical refresher.
 
-- The app was **not** a complete PWA.
-- There was no Web App Manifest, no service worker registration, and no installable app icon set.
+## What Sprint 9 added
 
-## What changed
+### 1. Lightweight learning loops
 
-### PWA foundation
+- Added a home-page revisit section that uses saved items first and recent activity second.
+- The surface is intentionally compact and editorial rather than dashboard-like.
+- Saved comparisons can be resumed directly, while saved thinkers/themes can suggest an appropriate comparison entrypoint.
 
-- Added `app/manifest.ts` with standalone display mode, theme/background colors, and SVG-based icon declarations.
-- Added `public/icon.svg` as the single repository-tracked PWA icon asset.
-- Added `public/sw.js` service worker with:
-  - app shell precaching
-  - same-origin GET response caching
-  - navigation fallback to cached `/` when offline
-- Added `src/components/pwa/PwaRegistrar.tsx` and mounted it in `app/layout.tsx` so the service worker registers on the client.
-- Extended metadata in `app/layout.tsx` for manifest, icons, Apple web app support, and theme color.
+### 2. Recent-item continuation logic
 
-### Binary asset rollback
+- Added deterministic “continue from here” suggestion logic based on recent items.
+- Comparison views prefer corridor continuation (`nextComparisonSlugs`).
+- Thinker/theme recents resolve into related comparison entrypoints rather than generic recommendations.
+- Reason labels were updated to feel more educational, e.g. “流れをつかむ次の一歩”, “対立を深める比較”, “あとで戻ると効く比較”.
 
-- Removed previously added binary PNG icon files from the repository because binary files must not be included in the PR.
-- Updated manifest, metadata, and service worker precache entries to reference `icon.svg` only.
+### 3. Mini review mode on compare pages
 
-## Removed binary file details
+- Comparison pages now include a small `理解確認` block.
+- The review block is intentionally lightweight: three short review points, two gentle self-check prompts, and one suggested next step.
+- There is no scoring, streak, XP, or heavy quiz state.
 
-The removed binary files were generated app icon assets for installation surfaces:
+### 4. Thinker-page learning entry
 
-- `public/icon-192.png`: 192×192 PNG app icon
-- `public/icon-512.png`: 512×512 PNG app icon
-- `public/apple-touch-icon.png`: 180×180 Apple touch icon PNG
+- Thinker pages can now surface a compact “この人物から学ぶなら” module.
+- This module uses local recent/saved state on the client and points users toward a first comparison, an adjacent thinker, or a revisit route.
 
-They all used the same Noema-branded mark: a dark indigo background, a rounded darker inner panel, and a stylized “N”-like line motif in off-white and blue.
+### 5. Saved page as a study shelf
 
-## README synchronization completed
+- `/saved` is now organized as a study shelf instead of a flat archive.
+- Saved items are grouped into: saved comparisons, saved thinkers, and saved themes.
+- Each group can attach one deterministic “next study step” based on existing relation fields and recommendation helpers.
 
-- Updated the PWA section to reflect the SVG-only icon approach.
+## How the lightweight learning loop works
 
-## Validation and tests run
+The learning loop is still fully local and deterministic. There is no backend, auth, ML, or remote personalization. The main logic is centralized in `src/lib/recommendations.ts`.
 
-Executed during this session:
+Core behavior:
+
+- `saved` items create a reason to come back.
+- `recent` items create the continuation path.
+- Compare pages summarize and gently reinforce distinctions already seen.
+- Saved thinkers/themes are converted into the best comparison entrypoint instead of remaining passive bookmarks.
+
+This keeps Noema aligned with the product identity: calm, comparison-first, intellectually serious, and optional.
+
+## What was intentionally not built
+
+Sprint 9 intentionally did **not** add:
+
+- full spaced repetition / SRS infrastructure
+- heavy quiz mode
+- streaks, XP, badges, or gamification
+- backend/auth/CMS work
+- AI chat
+- graph view
+- timeline-first navigation
+
+## Validation run in Sprint 9
+
+Executed successfully during the session:
 
 - `npm run lint`
 - `npm run typecheck`
 - `npm run test`
 - `npm run build`
 
-## Remaining follow-up ideas
+Test coverage was expanded around:
 
-- Consider adding an explicit offline page instead of falling back to cached `/`.
-- If stricter platform compatibility is required later, decide on an external artifact pipeline for generated PNG icons rather than committing binaries to this repo.
-- If install promotion becomes important, add a custom install prompt UI using `beforeinstallprompt`.
+- revisit recommendation helper behavior
+- saved/recent-based continuation selection
+- saved study-shelf grouping
+- compare-page review block rendering
+- deterministic next-step logic
 
-## Suggested next step
+## Implementation notes for the next session
 
-1. **Offline UX refinement**
-   - Add a dedicated offline route/message for uncached navigations.
-   - Decide which dynamic routes should be warmed into cache beyond the current app shell.
+- Recommendation and learning-loop logic is intentionally centralized in `src/lib/recommendations.ts`; continue extending that file rather than scattering logic into many components.
+- Home / compare / thinker / saved surfaces now all depend on the same deterministic helper layer, so changes to recommendation copy or ordering should be validated across all four surfaces.
+- Thinker-page learning suggestions are client-driven because they depend on local recent/saved state.
+
+## Likely Sprint 10 options
+
+Two natural continuations now look strongest:
+
+1. **Editorial operating rules / curation discipline**
+   - formalize content-writing and corridor-linking rules
+   - define comparison quality thresholds
+   - document how theme starter guidance and bridge comparisons should be added
+
+2. **Theme-led re-editing of East Asian + 20th-century bridges**
+   - reorganize existing content into cleaner thematic corridors
+   - improve cross-pack discoverability without turning the product into a content sprawl
+
+If only one path is chosen next, the editorial-rules route is probably the better immediate complement to Sprint 9, because the app now has stronger revisit behavior and would benefit from clearer curation standards.

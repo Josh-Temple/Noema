@@ -11,7 +11,7 @@ The app is organized around comparison-led reading paths and direct entrypoints:
 - `/thinkers/[slug]` thinker detail
 - `/themes/[slug]` theme detail
 - `/search` grouped local search (thinkers / comparisons / themes)
-- `/saved` saved items
+- `/saved` saved items / study shelf with next-step suggestions
 
 ## Single active implementation and deploy target
 
@@ -28,6 +28,7 @@ There are no competing root-level static entrypoints. Vercel should deploy the r
 - Local typed content modules in `src/content`
 - Shared storage helpers in `src/lib/storage.ts` + hooks in `src/hooks`
 - UI clarity layer (Sprint 8): lightweight inline SVG icon system for nav/search/saved/recommendation scanability
+- Lightweight learning-loop layer (Sprint 9): saved/recent revisit surfaces, compare-page review cards, and study-shelf style saved grouping
 
 ## Local development
 
@@ -58,6 +59,15 @@ npm run build
 - The service worker caches the app shell and same-origin GET requests to provide installability plus basic offline revisit support for previously visited pages.
 - PWA metadata is configured in `app/layout.tsx` for installability without committing binary assets to the repository.
 
+
+
+## Lightweight learning loop (Sprint 9)
+
+- Home now includes a compact revisit section built from saved items and recent reading context.
+- Comparison pages now include a short optional review block (`理解確認`) plus calmer educational next-step labels.
+- Thinker pages can surface a compact “この人物から学ぶなら” path based on local recent/saved state.
+- Saved items are grouped as a local-only study shelf (comparisons / thinkers / themes), each with a deterministic next study step when available.
+- This is intentionally **not** a full quiz system, SRS dashboard, or gamified layer.
 
 ## Current content focus
 

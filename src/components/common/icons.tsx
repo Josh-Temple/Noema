@@ -43,6 +43,9 @@ export const ClockIcon = (props: IconProps) => (
 export const ThinkerIcon = (props: IconProps) => (
   <svg {...wrap(props)}><circle cx="12" cy="8" r="3" /><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6" /></svg>
 );
+export const CheckIcon = (props: IconProps) => (
+  <svg {...wrap(props)}><path d="m5 12 4 4L19 6" /></svg>
+);
 export const ChevronRightIcon = (props: IconProps) => (
   <svg {...wrap(props)}><path d="m9 6 6 6-6 6" /></svg>
 );
