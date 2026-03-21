@@ -1,3 +1,4 @@
+import { Comparison, Theme, Thinker } from "@/types/content";
 import { comparisons, getComparisonBySlug, getThemeBySlug, getThinkerBySlug, thinkers, themes } from "@/lib/content";
 import { comparisonPath, themePath, thinkerPath } from "@/lib/routes";
 import { StoredItem } from "@/lib/storage";
@@ -92,6 +93,34 @@ const uniqBySlug = <T extends { slug: string }>(items: T[]) => {
   });
 };
 
+const asComparison = (slug: string) => getComparisonBySlug(slug);
+const asThinker = (slug: string) => getThinkerBySlug(slug);
+const asTheme = (slug: string) => getThemeBySlug(slug);
+
+const buildComparisonSuggestion = (comparison: Comparison, reason: string, label = "比較") => ({
+  slug: comparison.slug,
+  title: `${label}: ${comparison.titleJa}`,
+  href: comparisonPath(comparison.leftThinkerSlug, comparison.rightThinkerSlug),
+  reason,
+});
+
+const buildThinkerSuggestion = (thinker: Thinker, reason: string, label = "思想家") => ({
+  slug: thinker.slug,
+  title: `${label}: ${thinker.nameJa}`,
+  href: thinkerPath(thinker.slug),
+  reason,
+});
+
+const buildThemeSuggestion = (theme: Theme, reason: string, label = "テーマ") => ({
+  slug: theme.slug,
+  title: `${label}: ${theme.titleJa}`,
+  href: themePath(theme.slug),
+  reason,
+});
+
+const dedupeSuggestions = <T extends { href: string }>(items: T[]) =>
+  items.filter((item, index, self) => self.findIndex((candidate) => candidate.href === item.href) === index);
+
 export const getFeaturedComparisons = ({ recent = [], saved = [], limit = 4 }: { recent?: StoredItem[]; saved?: StoredItem[]; limit?: number } = {}) => {
   const pinned = getEditorialPinnedComparisons();
   const contextSignals = collectContextSignals([...recent, ...saved]);
@@ -175,9 +204,32 @@ export const getOrderedThemeComparisons = (themeSlug: string) => {
 };
 
 export type NextStepSuggestion = {
+  slug: string;
   title: string;
   href: string;
   reason: string;
+};
+
+export type ComparisonReview = {
+  title: string;
+  summary: string;
+  reviewPoints: string[];
+  prompts: string[];
+  nextStep?: NextStepSuggestion;
+};
+
+export type SavedStudyGroup = {
+  title: string;
+  description: string;
+  emptyMessage: string;
+  items: Array<{
+    slug: string;
+    title: string;
+    href: string;
+    kindLabel: string;
+    note?: string;
+    nextStep?: NextStepSuggestion;
+  }>;
 };
 
 export const getCompareNextStepSuggestions = (comparisonSlug: string, limit = 8): NextStepSuggestion[] => {
@@ -189,32 +241,208 @@ export const getCompareNextStepSuggestions = (comparisonSlug: string, limit = 8)
   comparison.nextComparisonSlugs.forEach((slug, index) => {
     const next = getComparisonBySlug(slug);
     if (!next) return;
-    suggestions.push({
-      title: `比較: ${next.titleJa}`,
-      href: comparisonPath(next.leftThinkerSlug, next.rightThinkerSlug),
-      reason: index === 0 ? "次に見ると流れがつかみやすい" : "同じテーマの別ルート",
-    });
+    suggestions.push(buildComparisonSuggestion(next, index === 0 ? "流れをつかむ次の一歩" : "同じテーマの別ルート"));
   });
 
   comparison.nextThinkerSlugs.forEach((slug, index) => {
     const thinker = getThinkerBySlug(slug);
     if (!thinker) return;
-    suggestions.push({
-      title: `思想家: ${thinker.nameJa}`,
-      href: thinkerPath(slug),
-      reason: index === 0 ? "立場の背景を押さえる" : "反対側の立場から見る",
-    });
+    suggestions.push(buildThinkerSuggestion(thinker, index === 0 ? "先に見ると分かりやすい" : "背景を押さえて戻る"));
   });
 
   comparison.nextThemeSlugs.forEach((slug) => {
     const theme = getThemeBySlug(slug);
     if (!theme) return;
-    suggestions.push({
-      title: `テーマ: ${theme.titleJa}`,
-      href: themePath(slug),
-      reason: "テーマ全体で比較を深める",
-    });
+    suggestions.push(buildThemeSuggestion(theme, "対立を深める比較の入口"));
   });
 
-  return suggestions.filter((item, index, self) => self.findIndex((candidate) => candidate.href === item.href) === index).slice(0, limit);
+  return dedupeSuggestions(suggestions).slice(0, limit);
+};
+
+export const getComparisonReview = (comparisonSlug: string): ComparisonReview | null => {
+  const comparison = getComparisonBySlug(comparisonSlug);
+  if (!comparison) return null;
+
+  const reviewPoints = [comparison.summaryDifference, comparison.commonGround, ...comparison.sections.map((section) => section.takeaway)].slice(0, 3);
+  const prompts = [
+    `${comparison.whatToWatch[0] ?? "出発点"}が違うと、結論はどう変わるか。`,
+    `${comparison.leftThinkerSlug === comparison.rightThinkerSlug ? "立場" : "左右の立場"}の差を一文で言い直せるか。`,
+  ];
+
+  return {
+    title: `${comparison.titleJa}の振り返り`,
+    summary: comparison.whyThisComparisonMatters,
+    reviewPoints,
+    prompts,
+    nextStep: getCompareNextStepSuggestions(comparisonSlug, 1)[0],
+  };
+};
+
+export const getRecentContinuationSuggestions = (recent: StoredItem[], saved: StoredItem[] = [], limit = 3): NextStepSuggestion[] => {
+  const suggestions: NextStepSuggestion[] = [];
+  const context = collectContextSignals([...recent, ...saved]);
+
+  recent.forEach((item) => {
+    if (item.kind === "comparison") {
+      const comparison = asComparison(item.slug);
+      if (!comparison) return;
+      comparison.nextComparisonSlugs.forEach((slug, index) => {
+        const next = asComparison(slug);
+        if (!next) return;
+        suggestions.push(buildComparisonSuggestion(next, index === 0 ? "前回の続きから" : "対立を深める比較"));
+      });
+      return;
+    }
+
+    if (item.kind === "thinker") {
+      const thinker = asThinker(item.slug);
+      if (!thinker) return;
+      getThinkerRecommendations(thinker.slug, 2).forEach((comparison, index) => {
+        suggestions.push(buildComparisonSuggestion(comparison, index === 0 ? "この人物から入る比較" : "近くの論点を見直す"));
+      });
+      return;
+    }
+
+    const theme = asTheme(item.slug);
+    if (!theme) return;
+    getOrderedThemeComparisons(theme.slug)
+      .slice(0, 2)
+      .forEach((comparison, index) => {
+        suggestions.push(buildComparisonSuggestion(comparison, index === 0 ? "同じテーマの別ルート" : "あとで戻ると効く比較"));
+      });
+  });
+
+  const fallback = comparisons
+    .map((comparison) => ({ comparison, score: scoreComparison(comparison.slug, context) }))
+    .sort((a, b) => b.score - a.score || a.comparison.slug.localeCompare(b.comparison.slug))
+    .map(({ comparison }) => buildComparisonSuggestion(comparison, "保存や最近見た項目に近い比較"));
+
+  return dedupeSuggestions([...suggestions, ...fallback]).slice(0, limit);
+};
+
+export const getSavedRevisitSuggestions = (saved: StoredItem[], recent: StoredItem[] = [], limit = 3): NextStepSuggestion[] => {
+  const suggestions: NextStepSuggestion[] = [];
+
+  saved.forEach((item) => {
+    if (item.kind === "comparison") {
+      const comparison = asComparison(item.slug);
+      if (!comparison) return;
+      suggestions.push(buildComparisonSuggestion(comparison, "保存から再開", "見直す比較"));
+      const next = getCompareNextStepSuggestions(comparison.slug, 1)[0];
+      if (next) suggestions.push({ ...next, reason: "あとで戻ると効く比較" });
+      return;
+    }
+
+    if (item.kind === "thinker") {
+      const thinker = asThinker(item.slug);
+      if (!thinker) return;
+      const starter = getThinkerRecommendations(thinker.slug, 1)[0];
+      if (starter) suggestions.push(buildComparisonSuggestion(starter, "この人物から再開", "まずはこの1本"));
+      return;
+    }
+
+    const theme = asTheme(item.slug);
+    if (!theme) return;
+    getOrderedThemeComparisons(theme.slug)
+      .slice(0, 2)
+      .forEach((comparison, index) => {
+        suggestions.push(buildComparisonSuggestion(comparison, index === 0 ? "保存テーマの入口" : "同じテーマの別ルート", index === 0 ? "まずはこの1本" : "比較"));
+      });
+  });
+
+  return dedupeSuggestions([...suggestions, ...getRecentContinuationSuggestions(recent, saved, limit + 2)]).slice(0, limit);
+};
+
+export const getThinkerLearningSuggestions = (thinkerSlug: string, recent: StoredItem[] = [], saved: StoredItem[] = []) => {
+  const thinker = getThinkerBySlug(thinkerSlug);
+  if (!thinker) return [];
+
+  const suggestions: NextStepSuggestion[] = [];
+  const primary = getThinkerRecommendations(thinker.slug, 1)[0];
+  if (primary) suggestions.push(buildComparisonSuggestion(primary, "この人物から学ぶなら"));
+
+  const adjacent = getNextThinkerRecommendations(thinker.slug, 1)[0];
+  if (adjacent) suggestions.push(buildThinkerSuggestion(adjacent, "隣の思想家へ広げる"));
+
+  const revisit = getSavedRevisitSuggestions(
+    saved.filter((item) => item.slug === thinkerSlug || item.kind !== "thinker"),
+    recent.filter((item) => item.slug === thinkerSlug || item.kind !== "thinker"),
+    1,
+  )[0];
+  if (revisit) suggestions.push({ ...revisit, reason: "前回の流れに戻る" });
+
+  return dedupeSuggestions(suggestions).slice(0, 3);
+};
+
+export const getSavedStudyGroups = (saved: StoredItem[], recent: StoredItem[] = []): SavedStudyGroup[] => {
+  const savedComparisons = saved
+    .filter((item) => item.kind === "comparison")
+    .map((item) => asComparison(item.slug))
+    .filter((item): item is Comparison => Boolean(item))
+    .map((comparison) => ({
+      slug: comparison.slug,
+      title: comparison.titleJa,
+      href: comparisonPath(comparison.leftThinkerSlug, comparison.rightThinkerSlug),
+      kindLabel: "比較",
+      note: comparison.subtitle,
+      nextStep: getCompareNextStepSuggestions(comparison.slug, 1)[0],
+    }));
+
+  const savedThinkers = saved
+    .filter((item) => item.kind === "thinker")
+    .map((item) => asThinker(item.slug))
+    .filter((item): item is Thinker => Boolean(item))
+    .map((thinker) => ({
+      slug: thinker.slug,
+      title: thinker.nameJa,
+      href: thinkerPath(thinker.slug),
+      kindLabel: "思想家",
+      note: thinker.oneLiner,
+      nextStep: (() => {
+        const starter = getThinkerRecommendations(thinker.slug, 1)[0];
+        return starter ? buildComparisonSuggestion(starter, "この人物から入る比較") : undefined;
+      })(),
+    }));
+
+  const savedThemes = saved
+    .filter((item) => item.kind === "theme")
+    .map((item) => asTheme(item.slug))
+    .filter((item): item is Theme => Boolean(item))
+    .map((theme) => ({
+      slug: theme.slug,
+      title: theme.titleJa,
+      href: themePath(theme.slug),
+      kindLabel: "テーマ",
+      note: theme.shortDescription,
+      nextStep: (() => {
+        const starter = getOrderedThemeComparisons(theme.slug)[0];
+        return starter ? buildComparisonSuggestion(starter, "まずはこの1本") : undefined;
+      })(),
+    }));
+
+  const recentHint = getRecentContinuationSuggestions(recent, saved, 1)[0];
+
+  return [
+    {
+      title: "保存した比較",
+      description: "見直した比較から、次の一歩へつなげます。",
+      emptyMessage: "比較を保存すると、ここから再開できます。",
+      items: savedComparisons.map((item, index) => ({
+        ...item,
+        nextStep: index === 0 ? item.nextStep ?? recentHint : item.nextStep,
+      })),
+    },
+    {
+      title: "保存した思想家",
+      description: "人物から入り直せる比較を静かに並べます。",
+      emptyMessage: "思想家を保存すると、最初の比較入口を案内します。",
+      items: savedThinkers,
+    },
+    {
+      title: "保存したテーマ",
+      description: "テーマごとの入口比較を、学習棚のように整理します。",
+      emptyMessage: "テーマを保存すると、次に見る比較をここに出します。",
+      items: savedThemes,
+    },
+  ];
 };

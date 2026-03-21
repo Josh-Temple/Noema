@@ -5,9 +5,10 @@ import { ComparisonSummary } from "@/components/compare/ComparisonSummary";
 import { CommonGroundCard } from "@/components/compare/CommonGroundCard";
 import { ComparisonSectionCard } from "@/components/compare/ComparisonSectionCard";
 import { NextStepCard } from "@/components/compare/NextStepCard";
+import { ComparisonReviewCard } from "@/components/compare/ComparisonReviewCard";
 import { RecentTracker } from "@/components/common/RecentTracker";
 import { getComparisonByThinkerPair, getThinkerBySlug } from "@/lib/content";
-import { getCompareNextStepSuggestions } from "@/lib/recommendations";
+import { getComparisonReview, getCompareNextStepSuggestions } from "@/lib/recommendations";
 
 export default function ComparePage({ params }: { params: { left: string; right: string } }) {
   const comparison = getComparisonByThinkerPair(params.left, params.right);
@@ -15,6 +16,8 @@ export default function ComparePage({ params }: { params: { left: string; right:
   const left = getThinkerBySlug(comparison.leftThinkerSlug);
   const right = getThinkerBySlug(comparison.rightThinkerSlug);
   if (!left || !right) return notFound();
+
+  const review = getComparisonReview(comparison.slug);
 
   return (
     <div>
@@ -28,6 +31,7 @@ export default function ComparePage({ params }: { params: { left: string; right:
           <ComparisonSectionCard key={section.title} section={section} />
         ))}
       </section>
+      {review ? <ComparisonReviewCard review={review} /> : null}
       <section className="mb-6" aria-labelledby="next-step-heading">
         <h3 id="next-step-heading" className="mb-2 text-2xl font-bold">
           次の一歩

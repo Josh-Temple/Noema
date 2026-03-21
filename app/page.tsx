@@ -6,19 +6,21 @@ import { RecommendedComparisonCard } from "@/components/home/RecommendedComparis
 import { ThemeChipGrid } from "@/components/home/ThemeChipGrid";
 import { DiscoveryCard } from "@/components/home/DiscoveryCard";
 import { RecentItemCard } from "@/components/home/RecentItemCard";
+import { LearningLoopSection } from "@/components/home/LearningLoopSection";
 import { comparisons, themes } from "@/lib/content";
 import { comparisonPath, thinkerPath } from "@/lib/routes";
-import { getFeaturedComparisons, getTodayPick, getRecentRecommendations } from "@/lib/recommendations";
+import { getFeaturedComparisons, getRecentContinuationSuggestions, getSavedRevisitSuggestions, getTodayPick } from "@/lib/recommendations";
 import { useRecentItems } from "@/hooks/useRecentItems";
 import { useSavedItems } from "@/hooks/useSavedItems";
-import { ClockIcon, CompassIcon, SparkIcon, ThemeIcon, ThinkerIcon } from "@/components/common/icons";
+import { CompassIcon, SparkIcon, ThemeIcon, ThinkerIcon } from "@/components/common/icons";
 
 export default function HomePage() {
   const { recentItems } = useRecentItems();
   const { savedItems } = useSavedItems();
   const today = getTodayPick({ recent: recentItems, saved: savedItems });
-  const recentCompares = getRecentRecommendations(recentItems, savedItems);
   const recommendedComparisons = getFeaturedComparisons({ recent: recentItems, saved: savedItems, limit: 4 });
+  const savedRevisitItems = getSavedRevisitSuggestions(savedItems, recentItems, 2);
+  const recentContinuationItems = getRecentContinuationSuggestions(recentItems, savedItems, 3);
 
   return (
     <div>
@@ -29,6 +31,8 @@ export default function HomePage() {
           <RecommendedComparisonCard key={item.slug} item={item} primary={index === 0} />
         ))}
       </section>
+
+      <LearningLoopSection savedItems={savedRevisitItems} recentItems={recentContinuationItems} />
 
       <section className="mb-6">
         <SectionTitle icon={<ThemeIcon className="h-6 w-6" />} title="テーマ" description="テーマは比較に入る入口です。" />
@@ -43,8 +47,8 @@ export default function HomePage() {
       </section>
 
       <section className="mb-6">
-        <SectionTitle icon={<ClockIcon className="h-6 w-6" />} title="最近見た項目の近く" />
-        <DiscoveryCard title={recentCompares[0]?.titleJa ?? comparisons[2].titleJa} body={recentCompares[0]?.subtitle ?? comparisons[2].subtitle} href={comparisonPath((recentCompares[0] ?? comparisons[2]).leftThinkerSlug, (recentCompares[0] ?? comparisons[2]).rightThinkerSlug)} />
+        <SectionTitle icon={<CompassIcon className="h-6 w-6" />} title="最近見た項目の近く" />
+        <DiscoveryCard title={recentContinuationItems[0]?.title ?? comparisons[2].titleJa} body={recentContinuationItems[0]?.reason ?? comparisons[2].subtitle} href={recentContinuationItems[0]?.href ?? comparisonPath(comparisons[2].leftThinkerSlug, comparisons[2].rightThinkerSlug)} />
       </section>
     </div>
   );
