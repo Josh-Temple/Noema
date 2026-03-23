@@ -13,7 +13,9 @@ describe("theme detail page", () => {
     render(<ThemePage params={{ slug: "society-power" }} />);
 
     expect(screen.getByRole("heading", { name: "社会と権力はどう成り立つか" })).toBeInTheDocument();
+    expect(screen.getByText("まずはこの比較から")).toBeInTheDocument();
+    expect(screen.getByText("20世紀への入口")).toBeInTheDocument();
     expect(screen.getByText("アーレント vs マルクス")).toBeInTheDocument();
-    expect(screen.getByText("フーコー vs アーレント")).toBeInTheDocument();
+    expect(screen.getAllByText("フーコー vs アーレント").length).toBeGreaterThan(0);
   });
 });
