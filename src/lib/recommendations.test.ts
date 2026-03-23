@@ -2,6 +2,8 @@ import {
   getCompareNextStepSuggestions,
   getComparisonReview,
   getFeaturedComparisons,
+  getOrderedThemeComparisons,
+  getOrderedThemesForThinker,
   getRecentContinuationSuggestions,
   getRecentRecommendations,
   getSavedRevisitSuggestions,
@@ -32,10 +34,10 @@ describe("recommendations", () => {
     expect(related.slice(0, 3)).toEqual(expect.arrayContaining(["xunzi-hanfeizi", "hanfeizi-hobbes"]));
   });
 
-  it("adds calm learning labels to compare next steps", () => {
+  it("adds themed pathway labels to compare next steps", () => {
     const next = getCompareNextStepSuggestions("hanfeizi-hobbes");
     expect(next[0]?.reason).toBeTruthy();
-    expect(next.map((item) => item.reason)).toContain("流れをつかむ次の一歩");
+    expect(next.map((item) => item.reason)).toContain("このテーマの次の一歩");
   });
 
   it("builds recent continuation suggestions deterministically", () => {
@@ -53,7 +55,7 @@ describe("recommendations", () => {
       2,
     );
 
-    expect(items.map((item) => item.slug)).toContain("mencius-xunzi");
+    expect(items.map((item) => item.slug)).toContain("xunzi-hanfeizi");
   });
 
   it("derives study-shelf groups with next study steps", () => {
@@ -67,7 +69,7 @@ describe("recommendations", () => {
     );
 
     expect(groups[0]?.items[0]?.nextStep?.slug).toBe("xunzi-hanfeizi");
-    expect(groups[1]?.items[0]?.nextStep?.slug).toBe("xunzi-hanfeizi");
+    expect(groups[1]?.items[0]?.nextStep?.slug).toBe("hanfeizi-hobbes");
     expect(groups[2]?.items[0]?.nextStep?.slug).toBeTruthy();
   });
 
@@ -75,6 +77,16 @@ describe("recommendations", () => {
     const review = getComparisonReview("sartre-beauvoir");
     expect(review?.reviewPoints).toHaveLength(3);
     expect(review?.prompts).toHaveLength(2);
-    expect(review?.nextStep?.reason).toBe("流れをつかむ次の一歩");
+    expect(review?.nextStep?.reason).toBe("20世紀から見る");
+  });
+
+  it("pins starter pathways for priority themes", () => {
+    const items = getOrderedThemeComparisons("freedom").slice(0, 3).map((item) => item.slug);
+    expect(items).toEqual(["nietzsche-sartre", "sartre-beauvoir", "laozi-zhuangzi"]);
+  });
+
+  it("orders thinker themes toward the priority gateways", () => {
+    const items = getOrderedThemesForThinker("hanfeizi").slice(0, 2).map((item) => item.slug);
+    expect(items).toEqual(["state-legitimacy", "society-power"]);
   });
 });

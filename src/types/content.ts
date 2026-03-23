@@ -64,3 +64,26 @@ export type SearchEntry = {
   keywords: string[];
   href: string;
 };
+
+export type ThemePathwayGroup = {
+  id: string;
+  title: string;
+  description?: string;
+  comparisonSlugs: string[];
+};
+
+export type ThemePathwayConfig = {
+  slug: string;
+  eyebrow: string;
+  starterLabel: string;
+  starterDescription: string;
+  starterComparisonSlugs: string[];
+  groups: ThemePathwayGroup[];
+};
+
+export type HomePathwayRail = {
+  id: string;
+  title: string;
+  description: string;
+  comparisonSlugs: string[];
+};

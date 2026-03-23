@@ -7,7 +7,7 @@ describe("compare detail page", () => {
 
     expect(screen.getByRole("heading", { name: "合理主義 vs 経験主義" })).toBeInTheDocument();
     expect(screen.getByText("次の一歩")).toBeInTheDocument();
-    expect(screen.getAllByText("流れをつかむ次の一歩").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("このテーマの次の一歩").length).toBeGreaterThan(0);
   });
 
   it("renders the lightweight review block", () => {

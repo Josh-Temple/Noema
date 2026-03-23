@@ -10,14 +10,14 @@ export const RelatedComparisonStrip = ({ items }: { items: Comparison[] }) => (
         <CompareIcon className="h-5 w-5 text-noema-accent" />
         <span>関連比較</span>
       </h3>
-      <p className="text-xs text-noema-muted">まずは上から読むのがおすすめです</p>
+      <p className="text-xs text-noema-muted">優先テーマに近いものから上に並びます</p>
     </div>
     {items.map((item, index) => (
       <div key={item.slug} className="relative">
         {index < 2 ? (
-          <span className="pointer-events-none absolute right-2 top-2 z-10 rounded-full bg-[#3142a8] px-2 py-0.5 text-[10px] font-bold text-[#eef1ff]">推奨</span>
+          <span className="pointer-events-none absolute right-2 top-2 z-10 rounded-full bg-[#3142a8] px-2 py-0.5 text-[10px] font-bold text-[#eef1ff]">入口</span>
         ) : null}
-        <NextStepCard title={item.titleJa} href={comparisonPath(item.leftThinkerSlug, item.rightThinkerSlug)} />
+        <NextStepCard title={item.titleJa} subtitle={item.subtitle} href={comparisonPath(item.leftThinkerSlug, item.rightThinkerSlug)} />
       </div>
     ))}
   </section>

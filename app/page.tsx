@@ -7,12 +7,14 @@ import { ThemeChipGrid } from "@/components/home/ThemeChipGrid";
 import { DiscoveryCard } from "@/components/home/DiscoveryCard";
 import { RecentItemCard } from "@/components/home/RecentItemCard";
 import { LearningLoopSection } from "@/components/home/LearningLoopSection";
+import { ComparisonPathwayRail, ThemeEntryRail } from "@/components/home/PathwayRail";
 import { comparisons, themes } from "@/lib/content";
 import { comparisonPath, thinkerPath } from "@/lib/routes";
 import { getFeaturedComparisons, getRecentContinuationSuggestions, getSavedRevisitSuggestions, getTodayPick } from "@/lib/recommendations";
 import { useRecentItems } from "@/hooks/useRecentItems";
 import { useSavedItems } from "@/hooks/useSavedItems";
 import { CompassIcon, SparkIcon, ThemeIcon, ThinkerIcon } from "@/components/common/icons";
+import { getComparisonBySlugs, HOME_PATHWAY_RAILS, HOME_THEME_ENTRY_THEMES } from "@/lib/pathways";
 
 export default function HomePage() {
   const { recentItems } = useRecentItems();
@@ -35,8 +37,19 @@ export default function HomePage() {
       <LearningLoopSection savedItems={savedRevisitItems} recentItems={recentContinuationItems} />
 
       <section className="mb-6">
+        <SectionTitle icon={<CompassIcon className="h-6 w-6" />} title="テーマから入る" description="人間観・国家・自由・権力から、入りやすい比較ルートを選べます。" />
+        <ThemeEntryRail items={HOME_THEME_ENTRY_THEMES} />
+      </section>
+
+      <section className="mb-6">
         <SectionTitle icon={<ThemeIcon className="h-6 w-6" />} title="テーマ" description="テーマは比較に入る入口です。" />
         <ThemeChipGrid items={themes} />
+      </section>
+
+      <section className="mb-6 grid gap-3 lg:grid-cols-2">
+        {HOME_PATHWAY_RAILS.map((rail) => (
+          <ComparisonPathwayRail key={rail.id} title={rail.title} description={rail.description} items={getComparisonBySlugs(rail.comparisonSlugs)} />
+        ))}
       </section>
 
       <section className="mb-6">

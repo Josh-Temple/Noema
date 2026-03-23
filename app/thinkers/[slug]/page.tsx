@@ -5,9 +5,9 @@ import { RelatedComparisonStrip } from "@/components/thinker/RelatedComparisonSt
 import { RelatedThemeStrip } from "@/components/thinker/RelatedThemeStrip";
 import { NextThinkerStrip } from "@/components/thinker/NextThinkerStrip";
 import { ThinkerLearningPanel } from "@/components/thinker/ThinkerLearningPanel";
-import { getThemesForThinker, getThinkerBySlug } from "@/lib/content";
-import { getNextThinkerRecommendations, getThinkerRecommendations } from "@/lib/recommendations";
 import { RecentTracker } from "@/components/common/RecentTracker";
+import { getThinkerBySlug } from "@/lib/content";
+import { getNextThinkerRecommendations, getOrderedThemesForThinker, getThinkerRecommendations } from "@/lib/recommendations";
 
 export default function ThinkerPage({ params }: { params: { slug: string } }) {
   const thinker = getThinkerBySlug(params.slug);
@@ -21,7 +21,7 @@ export default function ThinkerPage({ params }: { params: { slug: string } }) {
       <ThinkerSummaryCard title="基本回答" body={thinker.basicAnswer} />
       <ThinkerLearningPanel thinkerSlug={thinker.slug} />
       <RelatedComparisonStrip items={getThinkerRecommendations(thinker.slug)} />
-      <RelatedThemeStrip items={getThemesForThinker(thinker.slug)} />
+      <RelatedThemeStrip items={getOrderedThemesForThinker(thinker.slug)} />
       <NextThinkerStrip items={getNextThinkerRecommendations(thinker.slug)} />
     </div>
   );

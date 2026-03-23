@@ -6,7 +6,7 @@ Noema is a **comparison-first philosophy learning app** built with Next.js App R
 
 The app is organized around comparison-led reading paths and direct entrypoints:
 
-- `/` home (search, recommended comparisons, themes, daily picks)
+- `/` home (search, recommended comparisons, theme-entry rails, daily picks)
 - `/compare/[left]/[right]` comparison detail
 - `/thinkers/[slug]` thinker detail
 - `/themes/[slug]` theme detail
@@ -86,6 +86,9 @@ npm run build
 - Search & Recommendation Upgrade (検索・推薦の賢化):
   - Upgraded local search relevance with alias support and better matching across thinker/theme/comparison metadata
   - Made recommendations more context-aware using local recent/saved signals while keeping deterministic local-only behavior
+- Theme Pathway Refresh (テーマ入口の再編集):
+  - Re-edited the four main entry themes — human nature, state legitimacy, freedom, and society/power — into stronger comparison-first gateways
+  - Made 20th-century bridge comparisons and East Asian corridors more visible on theme pages, home, and search without changing the product structure
 - East Asian Starter Pack (東洋思想スターターパック):
   - Strengthened East Asian corridor around Confucius / Laozi and added Mencius / Zhuangzi with relation-rich pathways
   - Added focused comparisons for East Asian entry and one bridge comparison (Confucius vs Aristotle) into the existing network

@@ -1,4 +1,4 @@
-import { getSearchIndex, searchEntries } from "@/lib/search";
+import { getSearchIndex, getSearchPathwayHighlights, getSearchThemeEntrySuggestions, searchEntries } from "@/lib/search";
 
 describe("search", () => {
   it("builds unified index", () => {
@@ -27,5 +27,15 @@ describe("search", () => {
   it("supports east asian second-wave aliases", () => {
     const results = searchEntries("性悪説");
     expect(results.some((entry) => entry.id.includes("xunzi") || entry.id.includes("xunzi-hanfeizi") || entry.id.includes("mencius-xunzi"))).toBe(true);
+  });
+
+  it("offers priority theme entry suggestions", () => {
+    const items = getSearchThemeEntrySuggestions().map((item) => item.slug);
+    expect(items).toEqual(["human-nature", "state-legitimacy", "freedom", "society-power"]);
+  });
+
+  it("highlights pathway comparisons for power-related searches", () => {
+    const items = getSearchPathwayHighlights("power").map((item) => item.slug);
+    expect(items).toEqual(expect.arrayContaining(["foucault-arendt", "arendt-marx"]));
   });
 });

@@ -2,68 +2,76 @@
 
 ## Current product state
 
-Noema is now a single root-level Next.js App Router application focused on comparison-first philosophy learning. The current product already includes the major content expansion waves described in `README.md` (modern epistemology, ethics/politics, ancient ethics, 20th-century bridges, search/recommendation upgrades, and East Asian Thought Pack II) plus baseline PWA support.
+Noema remains a single root-level Next.js App Router application focused on calm, comparison-first philosophy learning. Sprint 10 did not add another large content pack; instead it re-edited the existing 20th-century bridge corridor and East Asian corridor so they are easier to enter through themes, home, search, and recommendation ordering.
 
-Sprint 9 shifted the product emphasis from adding another large content pack to improving lightweight revisit behavior. The app should now feel more like a calm place to return to for a one-minute philosophical refresher.
+## What Sprint 10 changed
 
-## What Sprint 9 added
+### 1. Re-edited four theme gateways
 
-### 1. Lightweight learning loops
+The following themes now act more clearly as entry pages rather than flat labels:
 
-- Added a home-page revisit section that uses saved items first and recent activity second.
-- The surface is intentionally compact and editorial rather than dashboard-like.
-- Saved comparisons can be resumed directly, while saved thinkers/themes can suggest an appropriate comparison entrypoint.
+- `人間とは何か`
+- `国家はなぜ正当なのか`
+- `自由とは何か`
+- `社会と権力はどう成り立つか`
 
-### 2. Recent-item continuation logic
+Each of these theme pages now has:
 
-- Added deterministic “continue from here” suggestion logic based on recent items.
-- Comparison views prefer corridor continuation (`nextComparisonSlugs`).
-- Thinker/theme recents resolve into related comparison entrypoints rather than generic recommendations.
-- Reason labels were updated to feel more educational, e.g. “流れをつかむ次の一歩”, “対立を深める比較”, “あとで戻ると効く比較”.
+- a compact starter pathway block near the top
+- 2–4 curated starter comparisons
+- compact pathway groups instead of one undifferentiated list
+- stronger visibility for both 20th-century bridge routes and East Asian routes
 
-### 3. Mini review mode on compare pages
+### 2. 20th-century bridge pathways now surfaced more explicitly
 
-- Comparison pages now include a small `理解確認` block.
-- The review block is intentionally lightweight: three short review points, two gentle self-check prompts, and one suggested next step.
-- There is no scoring, streak, XP, or heavy quiz state.
+The sprint made these routes easier to notice from theme/home/search flows:
 
-### 4. Thinker-page learning entry
+- `Husserl vs Heidegger`
+- `Heidegger vs Sartre`
+- `Sartre vs Beauvoir`
+- `Arendt vs Marx`
+- `Foucault vs Arendt`
+- `Nietzsche vs Sartre` as a freedom-entry bridge into the 20th-century corridor
 
-- Thinker pages can now surface a compact “この人物から学ぶなら” module.
-- This module uses local recent/saved state on the client and points users toward a first comparison, an adjacent thinker, or a revisit route.
+### 3. East Asian pathways now surfaced more explicitly
 
-### 5. Saved page as a study shelf
+The sprint made these routes easier to notice from theme/home/search flows:
 
-- `/saved` is now organized as a study shelf instead of a flat archive.
-- Saved items are grouped into: saved comparisons, saved thinkers, and saved themes.
-- Each group can attach one deterministic “next study step” based on existing relation fields and recommendation helpers.
+- `Confucius vs Laozi`
+- `Confucius vs Mencius`
+- `Laozi vs Zhuangzi`
+- `Mencius vs Xunzi`
+- `Confucius vs Mozi`
+- `Xunzi vs Han Feizi`
+- `Mozi vs Mencius`
+- `Han Feizi vs Hobbes`
 
-## How the lightweight learning loop works
+### 4. Home curation changes
 
-The learning loop is still fully local and deterministic. There is no backend, auth, ML, or remote personalization. The main logic is centralized in `src/lib/recommendations.ts`.
+Home keeps recommended comparisons as the primary surface, but now also includes:
 
-Core behavior:
+- a compact `テーマから入る` section for the four priority themes
+- a `20世紀への入口` rail
+- a `東洋思想への入口` rail
 
-- `saved` items create a reason to come back.
-- `recent` items create the continuation path.
-- Compare pages summarize and gently reinforce distinctions already seen.
-- Saved thinkers/themes are converted into the best comparison entrypoint instead of remaining passive bookmarks.
+These additions are intentionally compact and comparison-led, so they support the main recommendation surface instead of replacing it.
 
-This keeps Noema aligned with the product identity: calm, comparison-first, intellectually serious, and optional.
+### 5. Search changes
 
-## What was intentionally not built
+Search is still local and deterministic, but now does more pathway work:
 
-Sprint 9 intentionally did **not** add:
+- empty search shows `テーマから入る` suggestions for the four priority themes
+- related searches can show a compact `この検索から入りやすい比較` highlight rail
+- alias coverage was expanded for freedom/state/power/human-nature related entry terms, including East Asian and 20th-century terms
+- grouping still stays simple: thinker / comparison / theme
 
-- full spaced repetition / SRS infrastructure
-- heavy quiz mode
-- streaks, XP, badges, or gamification
-- backend/auth/CMS work
-- AI chat
-- graph view
-- timeline-first navigation
+### 6. Thinker / compare pathway tuning
 
-## Validation run in Sprint 9
+- thinker pages now prioritize gateway themes more aggressively in related themes ordering
+- thinker-related comparisons are sorted more strongly toward priority theme corridors
+- compare next-step labels now use calmer pathway-aware language such as `このテーマの次の一歩`, `20世紀から見る`, and `東洋思想から見る` when that route is editorially clear
+
+## Validation run in Sprint 10
 
 Executed successfully during the session:
 
@@ -74,29 +82,34 @@ Executed successfully during the session:
 
 Test coverage was expanded around:
 
-- revisit recommendation helper behavior
-- saved/recent-based continuation selection
-- saved study-shelf grouping
-- compare-page review block rendering
-- deterministic next-step logic
+- priority theme starter ordering
+- thinker-theme ordering toward gateway themes
+- search theme-entry suggestions
+- search pathway highlight behavior
+- theme page pathway rendering
 
-## Implementation notes for the next session
+## Product/editorial notes for the next session
 
-- Recommendation and learning-loop logic is intentionally centralized in `src/lib/recommendations.ts`; continue extending that file rather than scattering logic into many components.
-- Home / compare / thinker / saved surfaces now all depend on the same deterministic helper layer, so changes to recommendation copy or ordering should be validated across all four surfaces.
-- Thinker-page learning suggestions are client-driven because they depend on local recent/saved state.
+Important editorial rule preserved in Sprint 10:
 
-## Likely Sprint 10 options
+- Noema should stay comparison-first.
+- Themes should function as launch pads, not mini essays.
+- East Asian and 20th-century bridges should be surfaced through supported comparisons, not forced spectacle.
 
-Two natural continuations now look strongest:
+The new pathway metadata is intentionally lightweight. Continue extending it in small editorial steps rather than converting it into a large CMS-like system.
 
-1. **Editorial operating rules / curation discipline**
-   - formalize content-writing and corridor-linking rules
-   - define comparison quality thresholds
-   - document how theme starter guidance and bridge comparisons should be added
+## Likely Sprint 11 options
 
-2. **Theme-led re-editing of East Asian + 20th-century bridges**
-   - reorganize existing content into cleaner thematic corridors
-   - improve cross-pack discoverability without turning the product into a content sprawl
+Two strong next steps now remain:
 
-If only one path is chosen next, the editorial-rules route is probably the better immediate complement to Sprint 9, because the app now has stronger revisit behavior and would benefit from clearer curation standards.
+1. **Theme-by-theme reading-order guidance**
+   - add very light `読む順` hints within the four priority themes
+   - keep it calm, optional, and comparison-first
+   - avoid turning the product into a syllabus dashboard
+
+2. **Saved-based thematic revisit guidance**
+   - make `/saved` better at resurfacing a saved theme as a compact pathway
+   - cluster revisit suggestions by theme corridors rather than only by item kind
+   - reuse the current deterministic local recommendation layer
+
+If only one is chosen, the reading-order guidance route is probably the most natural immediate continuation, because Sprint 10 already clarified where to enter and Sprint 11 can clarify how to continue from there.

@@ -1,6 +1,7 @@
 import { Comparison, Theme, Thinker } from "@/types/content";
 import { comparisons, getComparisonBySlug, getThemeBySlug, getThinkerBySlug, thinkers, themes } from "@/lib/content";
 import { comparisonPath, themePath, thinkerPath } from "@/lib/routes";
+import { getPriorityThemePathway, isEastAsianComparison, isPriorityTheme, isTwentiethCenturyComparison } from "@/lib/pathways";
 import { StoredItem } from "@/lib/storage";
 
 const daySeed = () => {
@@ -153,14 +154,19 @@ export const getThinkerRecommendations = (thinkerSlug: string, limit = 6) => {
   const thinker = getThinkerBySlug(thinkerSlug);
   if (!thinker) return [];
 
-  const preferred = thinker.relatedComparisonSlugs.map((slug) => getComparisonBySlug(slug)).filter((item): item is NonNullable<typeof item> => Boolean(item));
+  const priorityThemes = thinker.relatedThemeSlugs.filter((slug) => isPriorityTheme(slug));
+  const score = (comparison: Comparison) =>
+    comparison.themeSlugs.filter((slug) => thinker.relatedThemeSlugs.includes(slug)).length * 2 +
+    comparison.themeSlugs.filter((slug) => priorityThemes.includes(slug)).length * 3 +
+    Number(isTwentiethCenturyComparison(comparison.slug) || isEastAsianComparison(comparison.slug));
+
+  const preferred = thinker.relatedComparisonSlugs
+    .map((slug) => getComparisonBySlug(slug))
+    .filter((item): item is NonNullable<typeof item> => Boolean(item))
+    .sort((a, b) => score(b) - score(a) || a.slug.localeCompare(b.slug));
   const fallback = comparisons
     .filter((item) => item.leftThinkerSlug === thinkerSlug || item.rightThinkerSlug === thinkerSlug)
-    .sort((a, b) => {
-      const aShared = a.themeSlugs.filter((slug) => thinker.relatedThemeSlugs.includes(slug)).length;
-      const bShared = b.themeSlugs.filter((slug) => thinker.relatedThemeSlugs.includes(slug)).length;
-      return bShared - aShared;
-    });
+    .sort((a, b) => score(b) - score(a) || a.slug.localeCompare(b.slug));
 
   return uniqBySlug([...preferred, ...fallback]).slice(0, limit);
 };
@@ -169,18 +175,19 @@ export const getNextThinkerRecommendations = (thinkerSlug: string, limit = 6) =>
   const thinker = getThinkerBySlug(thinkerSlug);
   if (!thinker) return [];
 
+  const score = (candidate: Thinker) =>
+    candidate.relatedThemeSlugs.filter((slug) => thinker.relatedThemeSlugs.includes(slug)).length * 2 +
+    candidate.relatedThemeSlugs.filter((slug) => isPriorityTheme(slug)).length * 3 +
+    candidate.relatedComparisonSlugs.filter((slug) => thinker.relatedComparisonSlugs.includes(slug)).length;
+
   const preferred = thinker.relatedThinkerSlugs
     .map((slug) => getThinkerBySlug(slug))
-    .filter((item): item is NonNullable<typeof item> => Boolean(item));
+    .filter((item): item is NonNullable<typeof item> => Boolean(item))
+    .sort((a, b) => score(b) - score(a) || a.slug.localeCompare(b.slug));
 
   const fallback = thinkers
     .filter((candidate) => candidate.slug !== thinkerSlug)
-    .map((candidate) => ({
-      candidate,
-      score:
-        candidate.relatedThemeSlugs.filter((slug) => thinker.relatedThemeSlugs.includes(slug)).length * 2 +
-        candidate.relatedComparisonSlugs.filter((slug) => thinker.relatedComparisonSlugs.includes(slug)).length,
-    }))
+    .map((candidate) => ({ candidate, score: score(candidate) }))
     .sort((a, b) => b.score - a.score || a.candidate.slug.localeCompare(b.candidate.slug))
     .map((entry) => entry.candidate);
 
@@ -191,13 +198,18 @@ export const getOrderedThemeComparisons = (themeSlug: string) => {
   const theme = getThemeBySlug(themeSlug);
   if (!theme) return [];
 
-  const pinned = theme.relatedComparisonSlugs.map((slug) => getComparisonBySlug(slug)).filter((item): item is NonNullable<typeof item> => Boolean(item));
+  const pathway = getPriorityThemePathway(themeSlug);
+  const pathwayPinned = pathway?.groups.flatMap((group) => group.comparisonSlugs) ?? [];
+  const starterPinned = pathway?.starterComparisonSlugs ?? [];
+  const pinned = [...starterPinned, ...theme.relatedComparisonSlugs, ...pathwayPinned]
+    .map((slug) => getComparisonBySlug(slug))
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
   const fallback = comparisons
     .filter((comparison) => comparison.themeSlugs.includes(themeSlug))
     .sort((a, b) => {
-      const aStarter = Number(a.nextThemeSlugs.includes(themeSlug));
-      const bStarter = Number(b.nextThemeSlugs.includes(themeSlug));
-      return bStarter - aStarter;
+      const aStarter = Number((pathway?.starterComparisonSlugs ?? []).includes(a.slug)) + Number(a.nextThemeSlugs.includes(themeSlug));
+      const bStarter = Number((pathway?.starterComparisonSlugs ?? []).includes(b.slug)) + Number(b.nextThemeSlugs.includes(themeSlug));
+      return bStarter - aStarter || a.slug.localeCompare(b.slug);
     });
 
   return uniqBySlug([...pinned, ...fallback]);
@@ -232,6 +244,12 @@ export type SavedStudyGroup = {
   }>;
 };
 
+const getComparisonRouteLabel = (fromSlug: string, toSlug: string, index: number) => {
+  if (index === 0 && isTwentiethCenturyComparison(fromSlug) && isTwentiethCenturyComparison(toSlug)) return "20世紀から見る";
+  if (index === 0 && isEastAsianComparison(fromSlug) && isEastAsianComparison(toSlug)) return "東洋思想から見る";
+  return index === 0 ? "このテーマの次の一歩" : "同じテーマの別ルート";
+};
+
 export const getCompareNextStepSuggestions = (comparisonSlug: string, limit = 8): NextStepSuggestion[] => {
   const comparison = getComparisonBySlug(comparisonSlug);
   if (!comparison) return [];
@@ -241,7 +259,7 @@ export const getCompareNextStepSuggestions = (comparisonSlug: string, limit = 8)
   comparison.nextComparisonSlugs.forEach((slug, index) => {
     const next = getComparisonBySlug(slug);
     if (!next) return;
-    suggestions.push(buildComparisonSuggestion(next, index === 0 ? "流れをつかむ次の一歩" : "同じテーマの別ルート"));
+    suggestions.push(buildComparisonSuggestion(next, getComparisonRouteLabel(comparison.slug, slug, index)));
   });
 
   comparison.nextThinkerSlugs.forEach((slug, index) => {
@@ -445,4 +463,20 @@ export const getSavedStudyGroups = (saved: StoredItem[], recent: StoredItem[] = 
       items: savedThemes,
     },
   ];
+};
+
+
+export const getOrderedThemesForThinker = (thinkerSlug: string) => {
+  const thinker = getThinkerBySlug(thinkerSlug);
+  if (!thinker) return [];
+
+  return themes
+    .filter((theme) => theme.relatedThinkerSlugs.includes(thinkerSlug))
+    .sort((a, b) => {
+      const aPriority = Number(isPriorityTheme(a.slug));
+      const bPriority = Number(isPriorityTheme(b.slug));
+      const aPath = Number(Boolean(getPriorityThemePathway(a.slug)));
+      const bPath = Number(Boolean(getPriorityThemePathway(b.slug)));
+      return bPriority - aPriority || bPath - aPath || a.titleJa.localeCompare(b.titleJa, "ja");
+    });
 };
