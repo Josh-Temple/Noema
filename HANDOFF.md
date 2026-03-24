@@ -152,3 +152,38 @@ This session implemented a **surface cleanup** on the home screen (not a redesig
 - `npm run build`
 
 All passed in the session environment.
+
+---
+
+## Sprint 12 (home hierarchy simplification pass) update
+
+This session continued the same UI direction and made the home screen feel less card-heavy without redesigning the product.
+
+### What changed
+
+1. **Kept `おすすめ比較` as the primary visual block**
+   - recommendation cards remain card-based
+   - border strength on non-primary recommendations was softened so the first recommendation still reads as the visual anchor
+
+2. **Further simplified `1分で振り返る`**
+   - section now behaves as one light grouped surface
+   - saved/recent groups are separated by a subtle divider, not nested framed boxes
+   - row dividers are lighter and row spacing is cleaner
+
+3. **Lightened `テーマから入る` into route rows**
+   - replaced repeated item-card treatment with grouped tappable rows
+   - kept icon-assisted orientation and clear tap affordance
+   - supporting line remains but with reduced visual density
+
+4. **Made chips and lower rails more supportive**
+   - theme chips now sit in a quiet grouped area and use softer fill-first styling
+   - lower editorial rails (`20世紀への入口`, `東洋思想への入口`, daily picks) now use softer grouped rows and lower border emphasis
+
+5. **Adjusted section rhythm**
+   - increased spacing between major sections to rely more on vertical rhythm than borders
+   - preserved dark premium mood and comparison-first structure
+
+### Validation run in this session
+
+- `npm run lint`
+- `npm run typecheck`

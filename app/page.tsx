@@ -27,7 +27,7 @@ export default function HomePage() {
   return (
     <div>
       <SearchBar />
-      <section className="mb-8">
+      <section className="mb-10">
         <SectionTitle icon={<SparkIcon className="h-5 w-5" />} title="おすすめ比較" description="まずはここから。保存・最近見た流れをもとに、読みやすい比較を並べています。" />
         {recommendedComparisons.map((item, index) => (
           <RecommendedComparisonCard key={item.slug} item={item} primary={index === 0} />
@@ -36,27 +36,31 @@ export default function HomePage() {
 
       <LearningLoopSection savedItems={savedRevisitItems} recentItems={recentContinuationItems} />
 
-      <section className="mb-7">
+      <section className="mb-9">
         <SectionTitle icon={<CompassIcon className="h-5 w-5" />} title="テーマから入る" description="主要テーマごとの入口を短くまとめています。" />
         <ThemeEntryRail items={HOME_THEME_ENTRY_THEMES} />
       </section>
 
-      <section className="mb-6">
+      <section className="mb-8">
         <SectionTitle icon={<ThemeIcon className="h-4 w-4" />} title="テーマ" description="比較に入るための入口。" />
         <ThemeChipGrid items={themes} />
       </section>
 
-      <section className="mb-7 grid gap-3 lg:grid-cols-2">
+      <section className="mb-8 grid gap-3 lg:grid-cols-2">
         {HOME_PATHWAY_RAILS.map((rail) => (
           <ComparisonPathwayRail key={rail.id} title={rail.title} description={rail.description} items={getComparisonBySlugs(rail.comparisonSlugs)} />
         ))}
       </section>
 
-      <section className="mb-6">
+      <section className="mb-8">
         <SectionTitle icon={<CompassIcon className="h-4 w-4" />} title="任せる" description="日替わり提案。" />
-        <RecentItemCard icon={<ThinkerIcon className="h-4 w-4" />} title={`今日の思想家: ${today.thinker.nameJa}`} subtitle={today.thinker.oneLiner} href={thinkerPath(today.thinker.slug)} />
-        <RecentItemCard icon={<SparkIcon className="h-4 w-4" />} title={`今日の比較: ${today.comparison.titleJa}`} subtitle={today.comparison.subtitle} href={comparisonPath(today.comparison.leftThinkerSlug, today.comparison.rightThinkerSlug)} />
-        <RecentItemCard icon={<ThemeIcon className="h-4 w-4" />} title={`今日のテーマ: ${today.theme.titleJa}`} subtitle={today.theme.shortDescription} href={`/themes/${today.theme.slug}`} />
+        <div className="rounded-card bg-[#0f1630]/40 p-1.5">
+          <div className="divide-y divide-noema-line/25">
+            <RecentItemCard icon={<ThinkerIcon className="h-4 w-4" />} title={`今日の思想家: ${today.thinker.nameJa}`} subtitle={today.thinker.oneLiner} href={thinkerPath(today.thinker.slug)} />
+            <RecentItemCard icon={<SparkIcon className="h-4 w-4" />} title={`今日の比較: ${today.comparison.titleJa}`} subtitle={today.comparison.subtitle} href={comparisonPath(today.comparison.leftThinkerSlug, today.comparison.rightThinkerSlug)} />
+            <RecentItemCard icon={<ThemeIcon className="h-4 w-4" />} title={`今日のテーマ: ${today.theme.titleJa}`} subtitle={today.theme.shortDescription} href={`/themes/${today.theme.slug}`} />
+          </div>
+        </div>
       </section>
 
       <section className="mb-6">
