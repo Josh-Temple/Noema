@@ -27,14 +27,14 @@ export const NextStepCard = ({
       className={
         isRow
           ? "group block rounded-md px-1 py-2.5 text-noema-muted transition hover:bg-white/[0.02]"
-          : "mb-2 block rounded-card border border-noema-line/80 bg-gradient-to-b from-[#13163a] to-[#0d102f] p-3 text-noema-muted"
+          : "mb-2 block border-b border-noema-line/30 px-1 py-3 text-noema-muted transition hover:bg-white/[0.02]"
       }
     >
       <p
         className={
           isRow
             ? "mb-1 inline-flex items-center gap-1 text-[11px] text-[#a8b7e3]"
-            : "mb-1 inline-flex items-center gap-1 rounded-full border border-[#33457c] bg-[#131c37] px-2 py-0.5 text-[11px] text-[#dce6ff]"
+            : "mb-1 inline-flex items-center gap-1 text-[11px] text-[#b4c2e9]"
         }
       >
         <Icon className="h-3 w-3" />

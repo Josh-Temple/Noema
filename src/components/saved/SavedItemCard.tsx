@@ -11,8 +11,8 @@ export const SavedItemCard = ({ title, href }: { title: string; href: string }) 
   const { label, icon: Icon } = kindMeta(href);
 
   return (
-    <Link href={href} className="mb-2 block rounded-card border border-noema-line bg-gradient-to-b from-[#13163a] to-[#0d102f] p-4">
-      <p className="mb-1 inline-flex items-center gap-1 rounded-full border border-[#33457c] bg-[#131c37] px-2 py-0.5 text-[11px] text-[#dce6ff]">
+    <Link href={href} className="mb-2 block border-b border-noema-line/30 px-1 py-3 transition hover:bg-white/[0.02]">
+      <p className="mb-1 inline-flex items-center gap-1 text-[11px] text-[#bdc9ed]">
         <Icon className="h-3 w-3" />
         <span>{label}</span>
       </p>
