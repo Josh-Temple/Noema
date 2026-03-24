@@ -77,6 +77,39 @@ Executed successfully during the session:
 
 - `npm run lint`
 - `npm run typecheck`
+
+---
+
+## Sprint 13 (cross-screen minimal design pass) update
+
+This session expanded the minimal-surface direction from home into **all major reading screens** while keeping Noema’s comparison-first hierarchy.
+
+### What changed
+
+1. **Card usage reduced to essential hierarchy points**
+   - shared `InfoCard` was restyled into a lighter divider-led panel surface (`border-y` + low-contrast background)
+   - recommendation primary emphasis remains, but secondary emphasis now relies more on spacing and typography than framed boxes
+
+2. **Comparison/theme progression blocks simplified**
+   - `NextStepCard` default style changed from framed card blocks to divider rows
+   - theme grouped comparison sections now use quiet banded sections instead of bordered boxes
+   - comparison detail section blocks now use line-based left accents and lighter grouping containers
+
+3. **Search and saved screens moved to row-first language**
+   - search result rows now use simpler metadata labels and lighter “open” affordance without pill buttons
+   - saved items and study shelf groups now rely on separators rather than nested card stacks
+   - empty states now use lighter dashed divider surfaces instead of heavy boxed cards
+
+4. **Home rails aligned with the same system**
+   - theme entry rail and pathway rails now use divider-led grouped rows
+   - visual rhythm is driven by spacing + subtle separators rather than repeated rounded cards
+
+### Validation run in this session
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run build`
 - `npm run test`
 - `npm run build`
 
@@ -187,3 +220,42 @@ This session continued the same UI direction and made the home screen feel less 
 
 - `npm run lint`
 - `npm run typecheck`
+- `npm run test`
+- `npm run build`
+
+All passed in the session environment.
+
+---
+
+## Sprint 13 (cross-screen minimal design pass) update
+
+This session expanded the minimal-surface direction from home into **all major reading screens** while keeping Noema’s comparison-first hierarchy.
+
+### What changed
+
+1. **Card usage reduced to essential hierarchy points**
+   - shared `InfoCard` was restyled into a lighter divider-led panel surface (`border-y` + low-contrast background)
+   - recommendation primary emphasis remains, but secondary emphasis now relies more on spacing and typography than framed boxes
+
+2. **Comparison/theme progression blocks simplified**
+   - `NextStepCard` default style changed from framed card blocks to divider rows
+   - theme grouped comparison sections now use quiet banded sections instead of bordered boxes
+   - comparison detail section blocks now use line-based left accents and lighter grouping containers
+
+3. **Search and saved screens moved to row-first language**
+   - search result rows now use simpler metadata labels and lighter “open” affordance without pill buttons
+   - saved items and study shelf groups now rely on separators rather than nested card stacks
+   - empty states now use lighter dashed divider surfaces instead of heavy boxed cards
+
+4. **Home rails aligned with the same system**
+   - theme entry rail and pathway rails now use divider-led grouped rows
+   - visual rhythm is driven by spacing + subtle separators rather than repeated rounded cards
+
+### Validation run in this session
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run build`
+
+All passed in the session environment.

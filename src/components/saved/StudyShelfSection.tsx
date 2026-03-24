@@ -14,7 +14,7 @@ export const StudyShelfSection = ({ groups }: { groups: SavedStudyGroup[] }) => 
 
     <div className="space-y-5">
       {groups.map((group) => (
-        <section key={group.title} className="rounded-card border border-noema-line bg-[#111431] p-4" aria-labelledby={`${group.title}-heading`}>
+        <section key={group.title} className="border-y border-noema-line/35 bg-[#111431]/35 py-4" aria-labelledby={`${group.title}-heading`}>
           <div className="mb-3">
             <h3 id={`${group.title}-heading`} className="text-xl font-bold text-noema-text">{group.title}</h3>
             <p className="mt-1 text-sm text-noema-muted">{group.description}</p>
@@ -23,9 +23,9 @@ export const StudyShelfSection = ({ groups }: { groups: SavedStudyGroup[] }) => 
           {group.items.length === 0 ? (
             <EmptyState title="まだ項目がありません" body={group.emptyMessage} />
           ) : (
-            <ul className="space-y-3">
+            <ul>
               {group.items.map((item) => (
-                <li key={`${group.title}:${item.slug}`} className="rounded-card border border-noema-line bg-[#0d1028] p-3">
+                <li key={`${group.title}:${item.slug}`} className="border-b border-noema-line/25 py-3 last:border-b-0">
                   <Link href={item.href} className="flex items-center justify-between gap-3 text-noema-text">
                     <div>
                       <p className="mb-1 text-xs text-[#b8c5ec]">{item.kindLabel}</p>

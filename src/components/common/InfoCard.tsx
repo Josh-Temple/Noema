@@ -1,3 +1,3 @@
 export const InfoCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <article className={`mb-3 rounded-card border border-noema-line/55 bg-gradient-to-b from-[#121736] to-[#0d122c] p-4 ${className}`}>{children}</article>
+  <article className={`mb-3 border-y border-noema-line/35 bg-[#0f142d]/35 px-1 py-4 sm:px-2 ${className}`}>{children}</article>
 );

@@ -9,7 +9,7 @@ export const ThemeComparisonList = ({ items, groups }: { items: Comparison[]; gr
     {groups?.length ? (
       <div className="space-y-4">
         {groups.map((group) => (
-          <section key={group.id} aria-labelledby={`theme-group-${group.id}`} className="rounded-card border border-noema-line/80 bg-[#101531]/70 p-3">
+          <section key={group.id} aria-labelledby={`theme-group-${group.id}`} className="border-y border-noema-line/35 bg-[#101531]/35 px-2 py-3">
             <h4 id={`theme-group-${group.id}`} className="flex items-center gap-2 text-lg font-bold">
               <CompassIcon className="h-4 w-4 text-noema-accent" />
               <span>{group.title}</span>

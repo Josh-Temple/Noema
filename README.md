@@ -30,6 +30,7 @@ There are no competing root-level static entrypoints. Vercel should deploy the r
 - UI clarity layer (Sprint 8): lightweight inline SVG icon system for nav/search/saved/recommendation scanability
 - Lightweight learning-loop layer (Sprint 9): saved/recent revisit surfaces, compare-page review cards, and study-shelf style saved grouping
 - Home hierarchy cleanup layer (Sprint 12): further reduced nested-card weight by converting secondary home sections to grouped row lists with subtle dividers, while keeping recommended comparisons as the strongest visual surface
+- Cross-screen minimal surface pass (Sprint 13): reduced card usage beyond home by shifting comparison/theme/search/saved surfaces toward divider-led grouped rows and lighter panel treatments, while preserving card emphasis only where hierarchy clarity benefits from it
 
 ## Local development
 
