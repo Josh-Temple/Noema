@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 
 export const TagChip = ({ label, icon }: { label: string; icon?: ReactNode }) => (
-  <span className="inline-flex items-center gap-1 rounded-full border border-[#2b3a68] bg-[#1b2744] px-3 py-2 text-sm text-[#dce5fd]">
-    {icon ? <span className="text-[#b8c7f0]">{icon}</span> : null}
+  <span className="inline-flex items-center gap-1 rounded-full bg-[#172240]/65 px-2.5 py-1.5 text-xs text-[#cad7fb] transition hover:bg-[#1c2a4f]">
+    {icon ? <span className="text-[#aebde8]">{icon}</span> : null}
     <span>{label}</span>
   </span>
 );

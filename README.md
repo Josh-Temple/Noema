@@ -29,6 +29,7 @@ There are no competing root-level static entrypoints. Vercel should deploy the r
 - Shared storage helpers in `src/lib/storage.ts` + hooks in `src/hooks`
 - UI clarity layer (Sprint 8): lightweight inline SVG icon system for nav/search/saved/recommendation scanability
 - Lightweight learning-loop layer (Sprint 9): saved/recent revisit surfaces, compare-page review cards, and study-shelf style saved grouping
+- Home surface cleanup layer (Sprint 11): reduced boundary noise on home by softening secondary borders, converting revisit items to a unified list surface, and lowering chip/secondary section emphasis while keeping recommendation cards as primary
 
 ## Local development
 
