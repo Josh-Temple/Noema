@@ -113,3 +113,42 @@ Two strong next steps now remain:
    - reuse the current deterministic local recommendation layer
 
 If only one is chosen, the reading-order guidance route is probably the most natural immediate continuation, because Sprint 10 already clarified where to enter and Sprint 11 can clarify how to continue from there.
+
+---
+
+## Sprint 11 (UI cleanup pass) update
+
+This session implemented a **surface cleanup** on the home screen (not a redesign), preserving Noema's dark premium/comparison-first identity while reducing visual boundary noise.
+
+### What changed
+
+1. **Recommended comparisons kept as primary hero**
+   - recommendation cards remain the strongest surface
+   - border emphasis was softened slightly for non-primary cards to reduce edge noise
+
+2. **`1分で振り返る` converted to a unified shelf**
+   - rebuilt as one parent surface
+   - internal items now render as lightweight list rows with subtle dividers
+   - removed repeated nested mini-card feel
+
+3. **`テーマから入る` lightened**
+   - lowered badge/border strength
+   - shortened supporting helper copy
+   - preserved clear interactivity and scanability
+
+4. **Theme chips visually weakened**
+   - chips now recede via softer fill-first styling and reduced spacing
+   - keeps discoverability while reducing dominance
+
+5. **Lower-priority sections softened**
+   - pathway rails, daily picks, and discovery card reduced in border/heading weight
+   - section headers use slightly smaller, quieter icon treatment
+
+### Validation run in this session
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run build`
+
+All passed in the session environment.
