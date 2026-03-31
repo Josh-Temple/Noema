@@ -259,3 +259,19 @@ This session expanded the minimal-surface direction from home into **all major r
 - `npm run build`
 
 All passed in the session environment.
+
+---
+
+## Sprint 14 (home section order tweak) update
+
+This session made a small home-screen ordering change requested by product feedback.
+
+### What changed
+
+- Moved the `任せる` section to the top of the home content stack, directly under the search bar.
+- Kept all existing `任せる` content and behavior unchanged (`今日の思想家 / 今日の比較 / 今日のテーマ`).
+- Left the remaining section order intact after that move (`おすすめ比較`, `1分で振り返る`, and subsequent rails).
+
+### Validation run in this session
+
+- `npm run test -- app/page.test.tsx`
