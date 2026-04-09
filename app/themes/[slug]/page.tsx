@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ThemeHero } from "@/components/theme/ThemeHero";
 import { ThemeStarterCard } from "@/components/theme/ThemeStarterCard";
+import { ThemeReadingOrderCard } from "@/components/theme/ThemeReadingOrderCard";
 import { ThemeComparisonList } from "@/components/theme/ThemeComparisonList";
 import { ThemeThinkerList } from "@/components/theme/ThemeThinkerList";
 import { getThemeBySlug, getThinkersForTheme } from "@/lib/content";
@@ -16,6 +17,14 @@ export default function ThemePage({ params }: { params: { slug: string } }) {
   const orderedComparisons = getOrderedThemeComparisons(theme.slug);
   const groupedSlugs = new Set(pathway?.groups.flatMap((group) => group.comparisonSlugs) ?? []);
   const groupedComparisons = pathway?.groups.map((group) => ({ ...group, items: getComparisonBySlugs(group.comparisonSlugs) })) ?? [];
+  const toReadingSection = (section: { title: string; description?: string; comparisonSlugs: string[] }) => ({
+    label: section.title,
+    description: section.description,
+    items: getComparisonBySlugs(section.comparisonSlugs),
+  });
+  const readingOrderSections = pathway?.readingOrder ? [toReadingSection(pathway.readingOrder.first)] : [];
+  if (pathway?.readingOrder?.next) readingOrderSections.push(toReadingSection(pathway.readingOrder.next));
+  if (pathway?.readingOrder?.detour) readingOrderSections.push(toReadingSection(pathway.readingOrder.detour));
   const remainingComparisons = orderedComparisons.filter((comparison) => !groupedSlugs.has(comparison.slug));
 
   return (
@@ -28,6 +37,7 @@ export default function ThemePage({ params }: { params: { slug: string } }) {
         text={pathway?.starterDescription ?? theme.starterGuidance}
         items={getComparisonBySlugs(pathway?.starterComparisonSlugs ?? orderedComparisons.slice(0, 3).map((item) => item.slug))}
       />
+      {pathway?.readingOrder ? <ThemeReadingOrderCard readingOrder={pathway.readingOrder} sections={readingOrderSections} /> : null}
       <ThemeComparisonList items={remainingComparisons} groups={groupedComparisons} />
       <ThemeThinkerList items={getThinkersForTheme(theme.slug)} />
     </div>

@@ -188,6 +188,44 @@ All passed in the session environment.
 
 ---
 
+## Sprint 14 (learning continuity pass) update
+
+This session focused on continuity improvements while preserving Noema's calm comparison-first structure.
+
+### What changed
+
+1. **Theme pages now include compact reading-order guidance**
+   - extended typed pathway metadata with optional `readingOrder` routes
+   - added explicit `最初の比較 / 次に進む比較 / 寄り道ルート（任意）` sections for the four priority themes:
+     - `human-nature`
+     - `state-legitimacy`
+     - `freedom`
+     - `society-power`
+   - rendered through a dedicated lightweight theme component using divider-led row links
+
+2. **`/saved` now starts with a resume-learning section**
+   - introduced deterministic local resume groups in recommendations logic
+   - resume groups prioritize continuity from:
+     - most recent comparison corridor
+     - strongest theme/pathway signals inferred from saved + recent items
+     - East Asian and 20th-century clusters when those signals are present
+   - existing grouped study-shelf sections were preserved below the new top section
+
+3. **Typed model and test updates**
+   - added `ThemeReadingOrder*` types and optional integration into `ThemePathwayConfig`
+   - updated saved/theme page tests to cover the new continuity surfaces
+
+### Validation run in this session
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run build`
+
+All passed in the session environment.
+
+---
+
 ## Sprint 12 (home hierarchy simplification pass) update
 
 This session continued the same UI direction and made the home screen feel less card-heavy without redesigning the product.
