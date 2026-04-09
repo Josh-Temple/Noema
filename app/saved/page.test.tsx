@@ -30,6 +30,8 @@ describe("saved page", () => {
   it("groups saved items into a study shelf with next steps", () => {
     render(<SavedPage />);
 
+    expect(screen.getByText("学びを再開する")).toBeInTheDocument();
+    expect(screen.getByText("直前の比較から続ける")).toBeInTheDocument();
     expect(screen.getByText("保存した学習棚")).toBeInTheDocument();
     expect(screen.getByText("保存した比較")).toBeInTheDocument();
     expect(screen.getByText("保存した思想家")).toBeInTheDocument();
