@@ -31,6 +31,7 @@ There are no competing root-level static entrypoints. Vercel should deploy the r
 - Lightweight learning-loop layer (Sprint 9): saved/recent revisit surfaces, compare-page review cards, and study-shelf style saved grouping
 - Home hierarchy cleanup layer (Sprint 12): further reduced nested-card weight by converting secondary home sections to grouped row lists with subtle dividers, while keeping recommended comparisons as the strongest visual surface
 - Cross-screen minimal surface pass (Sprint 13): reduced card usage beyond home by shifting comparison/theme/search/saved surfaces toward divider-led grouped rows and lighter panel treatments, while preserving card emphasis only where hierarchy clarity benefits from it
+- Learning continuity pass (Sprint 14): added compact reading-order guidance for priority theme pages and a new top-level resume-learning layer on `/saved`, both powered by deterministic local pathway/recommendation metadata
 
 ## Local development
 

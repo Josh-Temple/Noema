@@ -15,6 +15,22 @@ export const PRIORITY_THEME_PATHWAYS: ThemePathwayConfig[] = [
       { id: "east-asian", title: "東洋思想への入口", description: "性善・性悪と道家/儒家の人間観。", comparisonSlugs: ["mencius-xunzi", "confucius-laozi", "laozi-zhuangzi"] },
       { id: "western-basics", title: "西洋思想の基礎比較", description: "古代から入る別ルート。", comparisonSlugs: ["plato-epicurus", "aristotle-stoicism"] },
     ],
+    readingOrder: {
+      eyebrow: "読み進めるなら",
+      title: "小さな読む順",
+      first: {
+        title: "最初の比較",
+        comparisonSlugs: ["mencius-xunzi"],
+      },
+      next: {
+        title: "次に進む比較",
+        comparisonSlugs: ["heidegger-sartre", "confucius-laozi"],
+      },
+      detour: {
+        title: "寄り道ルート（任意）",
+        comparisonSlugs: ["husserl-heidegger", "laozi-zhuangzi"],
+      },
+    },
   },
   {
     slug: "state-legitimacy",
@@ -27,6 +43,22 @@ export const PRIORITY_THEME_PATHWAYS: ThemePathwayConfig[] = [
       { id: "bridges-20th", title: "20世紀への入口", description: "国家の正当化を政治的行為や権力批判へ開く。", comparisonSlugs: ["arendt-marx", "foucault-arendt"] },
       { id: "western-basics", title: "西洋思想の基礎比較", description: "社会契約から見直す。", comparisonSlugs: ["hobbes-locke", "locke-rousseau", "hobbes-rousseau"] },
     ],
+    readingOrder: {
+      eyebrow: "読み進めるなら",
+      title: "小さな読む順",
+      first: {
+        title: "最初の比較",
+        comparisonSlugs: ["xunzi-hanfeizi"],
+      },
+      next: {
+        title: "次に進む比較",
+        comparisonSlugs: ["hanfeizi-hobbes", "arendt-marx"],
+      },
+      detour: {
+        title: "寄り道ルート（任意）",
+        comparisonSlugs: ["confucius-mozi", "hobbes-locke"],
+      },
+    },
   },
   {
     slug: "freedom",
@@ -39,6 +71,22 @@ export const PRIORITY_THEME_PATHWAYS: ThemePathwayConfig[] = [
       { id: "east-asian", title: "東洋思想への入口", description: "無為・視点転換・役割倫理の距離感。", comparisonSlugs: ["laozi-zhuangzi", "confucius-zhuangzi"] },
       { id: "western-basics", title: "西洋思想の基礎比較", description: "制度と自由の関係から入る。", comparisonSlugs: ["hobbes-locke", "locke-rousseau", "bentham-mill"] },
     ],
+    readingOrder: {
+      eyebrow: "読み進めるなら",
+      title: "小さな読む順",
+      first: {
+        title: "最初の比較",
+        comparisonSlugs: ["nietzsche-sartre"],
+      },
+      next: {
+        title: "次に進む比較",
+        comparisonSlugs: ["sartre-beauvoir", "laozi-zhuangzi"],
+      },
+      detour: {
+        title: "寄り道ルート（任意）",
+        comparisonSlugs: ["heidegger-sartre", "bentham-mill"],
+      },
+    },
   },
   {
     slug: "society-power",
@@ -51,6 +99,22 @@ export const PRIORITY_THEME_PATHWAYS: ThemePathwayConfig[] = [
       { id: "east-asian", title: "東洋思想への入口", description: "礼法・法家・国家秩序の比較。", comparisonSlugs: ["xunzi-hanfeizi", "hanfeizi-hobbes"] },
       { id: "western-basics", title: "同じテーマの別ルート", description: "契約論から社会の成り立ちを見直す。", comparisonSlugs: ["hobbes-rousseau", "rawls-marx"] },
     ],
+    readingOrder: {
+      eyebrow: "読み進めるなら",
+      title: "小さな読む順",
+      first: {
+        title: "最初の比較",
+        comparisonSlugs: ["foucault-arendt"],
+      },
+      next: {
+        title: "次に進む比較",
+        comparisonSlugs: ["arendt-marx", "xunzi-hanfeizi"],
+      },
+      detour: {
+        title: "寄り道ルート（任意）",
+        comparisonSlugs: ["hanfeizi-hobbes", "hobbes-rousseau"],
+      },
+    },
   },
 ];
 

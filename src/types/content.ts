@@ -72,6 +72,20 @@ export type ThemePathwayGroup = {
   comparisonSlugs: string[];
 };
 
+export type ThemeReadingOrderRoute = {
+  title: string;
+  description?: string;
+  comparisonSlugs: string[];
+};
+
+export type ThemeReadingOrder = {
+  eyebrow?: string;
+  title: string;
+  first: ThemeReadingOrderRoute;
+  next?: ThemeReadingOrderRoute;
+  detour?: ThemeReadingOrderRoute;
+};
+
 export type ThemePathwayConfig = {
   slug: string;
   eyebrow: string;
@@ -79,6 +93,7 @@ export type ThemePathwayConfig = {
   starterDescription: string;
   starterComparisonSlugs: string[];
   groups: ThemePathwayGroup[];
+  readingOrder?: ThemeReadingOrder;
 };
 
 export type HomePathwayRail = {

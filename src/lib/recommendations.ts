@@ -1,7 +1,7 @@
 import { Comparison, Theme, Thinker } from "@/types/content";
 import { comparisons, getComparisonBySlug, getThemeBySlug, getThinkerBySlug, thinkers, themes } from "@/lib/content";
 import { comparisonPath, themePath, thinkerPath } from "@/lib/routes";
-import { getPriorityThemePathway, isEastAsianComparison, isPriorityTheme, isTwentiethCenturyComparison } from "@/lib/pathways";
+import { getComparisonBySlugs, getPriorityThemePathway, isEastAsianComparison, isPriorityTheme, isTwentiethCenturyComparison } from "@/lib/pathways";
 import { StoredItem } from "@/lib/storage";
 
 const daySeed = () => {
@@ -244,6 +244,17 @@ export type SavedStudyGroup = {
   }>;
 };
 
+export type ResumeSuggestion = NextStepSuggestion & {
+  context?: string;
+};
+
+export type SavedResumeGroup = {
+  id: string;
+  title: string;
+  description: string;
+  suggestions: ResumeSuggestion[];
+};
+
 const getComparisonRouteLabel = (fromSlug: string, toSlug: string, index: number) => {
   if (index === 0 && isTwentiethCenturyComparison(fromSlug) && isTwentiethCenturyComparison(toSlug)) return "20世紀から見る";
   if (index === 0 && isEastAsianComparison(fromSlug) && isEastAsianComparison(toSlug)) return "東洋思想から見る";
@@ -463,6 +474,125 @@ export const getSavedStudyGroups = (saved: StoredItem[], recent: StoredItem[] = 
       items: savedThemes,
     },
   ];
+};
+
+const buildThemeResumeSuggestions = (themeSlug: string, reasonPrefix: string, limit = 3): ResumeSuggestion[] => {
+  const pathway = getPriorityThemePathway(themeSlug);
+  const readingOrderSlugs = pathway?.readingOrder
+    ? [
+        ...pathway.readingOrder.first.comparisonSlugs,
+        ...(pathway.readingOrder.next?.comparisonSlugs ?? []),
+        ...(pathway.readingOrder.detour?.comparisonSlugs ?? []),
+      ]
+    : [];
+  const ordered = getOrderedThemeComparisons(themeSlug);
+
+  return dedupeSuggestions(
+    uniqBySlug([...getComparisonBySlugs(readingOrderSlugs), ...ordered]).map((comparison, index) => ({
+      ...buildComparisonSuggestion(comparison, index === 0 ? `${reasonPrefix}の入口` : "同じ流れを続ける比較"),
+      context: pathway?.starterLabel,
+    })),
+  ).slice(0, limit);
+};
+
+const savedThemeCounts = (items: StoredItem[]) => {
+  const counts = new Map<string, number>();
+  items.forEach((item) => {
+    if (item.kind === "theme") {
+      counts.set(item.slug, (counts.get(item.slug) ?? 0) + 3);
+      return;
+    }
+    if (item.kind === "comparison") {
+      const comparison = asComparison(item.slug);
+      comparison?.themeSlugs.forEach((slug) => counts.set(slug, (counts.get(slug) ?? 0) + 2));
+      return;
+    }
+    const thinker = asThinker(item.slug);
+    thinker?.relatedThemeSlugs.forEach((slug) => counts.set(slug, (counts.get(slug) ?? 0) + 1));
+  });
+  return counts;
+};
+
+export const getSavedResumeGroups = (saved: StoredItem[], recent: StoredItem[] = []): SavedResumeGroup[] => {
+  const groups: SavedResumeGroup[] = [];
+
+  const recentComparison = recent.find((item) => item.kind === "comparison");
+  if (recentComparison) {
+    const comparison = asComparison(recentComparison.slug);
+    if (comparison) {
+      groups.push({
+        id: "recent-corridor",
+        title: "直前の比較から続ける",
+        description: "前回の論点をそのまま伸ばす短いルートです。",
+        suggestions: getCompareNextStepSuggestions(comparison.slug, 3).map((suggestion, index) => ({
+          ...suggestion,
+          reason: index === 0 ? "前回の続きから" : suggestion.reason,
+          context: comparison.titleJa,
+        })),
+      });
+    }
+  }
+
+  const themeSignalCounts = savedThemeCounts([...saved, ...recent]);
+  const strongestThemes = [...themeSignalCounts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 2)
+    .map(([slug]) => slug);
+
+  if (strongestThemes.length > 0) {
+    const suggestions = strongestThemes.flatMap((slug) => buildThemeResumeSuggestions(slug, "このテーマ", 2));
+    groups.push({
+      id: "theme-corridor",
+      title: "テーマの流れで再開する",
+      description: "保存と最近見た項目から、いま自然につながるテーマ順路を出しています。",
+      suggestions: dedupeSuggestions(suggestions).slice(0, 4),
+    });
+  }
+
+  const eastSignals = [...saved, ...recent].filter((item) => item.kind === "comparison" && isEastAsianComparison(item.slug)).length;
+  if (eastSignals > 0) {
+    groups.push({
+      id: "east-asian-corridor",
+      title: "東洋思想ルートを続ける",
+      description: "儒家・道家・法家の比較軸で続けると理解がつながります。",
+      suggestions: getComparisonBySlugs(["mencius-xunzi", "confucius-mozi", "xunzi-hanfeizi"]).map((comparison) => ({
+        ...buildComparisonSuggestion(comparison, "東洋思想の流れを保つ"),
+        context: "東洋思想",
+      })),
+    });
+  }
+
+  const twentiethSignals = [...saved, ...recent].filter((item) => item.kind === "comparison" && isTwentiethCenturyComparison(item.slug)).length;
+  if (twentiethSignals > 0) {
+    groups.push({
+      id: "twentieth-corridor",
+      title: "20世紀ブリッジを続ける",
+      description: "実存・公共性・権力批判を比較で横断します。",
+      suggestions: getComparisonBySlugs(["heidegger-sartre", "sartre-beauvoir", "foucault-arendt"]).map((comparison) => ({
+        ...buildComparisonSuggestion(comparison, "20世紀ルートの続き"),
+        context: "20世紀橋渡し",
+      })),
+    });
+  }
+
+  const fallback = dedupeSuggestions([...getSavedRevisitSuggestions(saved, recent, 2), ...getRecentContinuationSuggestions(recent, saved, 2)])
+    .map((item) => ({ ...item, context: "保存・最近見た項目" }));
+  if (fallback.length > 0) {
+    groups.push({
+      id: "fallback",
+      title: "いま戻りやすい比較",
+      description: "迷ったときは、保存・最近見た流れに近い比較から再開できます。",
+      suggestions: fallback.slice(0, 3),
+    });
+  }
+
+  return groups
+    .map((group) => ({
+      ...group,
+      suggestions: dedupeSuggestions(group.suggestions).slice(0, 3),
+    }))
+    .filter((group) => group.suggestions.length > 0)
+    .slice(0, 3);
 };
 
 
