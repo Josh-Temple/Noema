@@ -304,6 +304,7 @@ export const comparisons: Comparison[] = [
     nextThinkerSlugs: ["rousseau", "mill"],
     nextComparisonSlugs: ["locke-rousseau", "bentham-mill"],
     nextThemeSlugs: ["state-legitimacy", "freedom"],
+    sourceIds: ["hobbes-leviathan", "locke-government", "sep-hobbes-moral-political", "sep-locke-political"],
   },
   {
     slug: "locke-rousseau",
@@ -323,6 +324,7 @@ export const comparisons: Comparison[] = [
     nextThinkerSlugs: ["rawls", "marx"],
     nextComparisonSlugs: ["rawls-marx", "hobbes-rousseau"],
     nextThemeSlugs: ["freedom", "state-legitimacy", "justice"],
+    sourceIds: ["locke-government", "rousseau-social-contract", "sep-locke-political"],
   },
   {
     slug: "rawls-marx",
@@ -419,6 +421,7 @@ export const comparisons: Comparison[] = [
     nextThinkerSlugs: ["foucault", "rawls"],
     nextComparisonSlugs: ["foucault-arendt", "rawls-marx"],
     nextThemeSlugs: ["society-power", "state-legitimacy"],
+    sourceIds: ["arendt-human-condition", "sep-arendt"],
   },
   {
     slug: "heidegger-sartre",
@@ -457,6 +460,7 @@ export const comparisons: Comparison[] = [
     nextThinkerSlugs: ["marx", "beauvoir"],
     nextComparisonSlugs: ["arendt-marx", "sartre-beauvoir"],
     nextThemeSlugs: ["society-power", "state-legitimacy"],
+    sourceIds: ["foucault-history-sexuality-1", "arendt-human-condition", "sep-foucault", "sep-arendt"],
   },
   {
     slug: "confucius-laozi",
@@ -571,6 +575,7 @@ export const comparisons: Comparison[] = [
     nextThinkerSlugs: ["hanfeizi", "hobbes", "confucius"],
     nextComparisonSlugs: ["xunzi-hanfeizi", "hanfeizi-hobbes", "confucius-mencius"],
     nextThemeSlugs: ["human-nature", "state-legitimacy"],
+    sourceIds: ["mencius", "xunzi-xing-e"],
   },
   {
     slug: "confucius-mozi",
@@ -647,6 +652,7 @@ export const comparisons: Comparison[] = [
     nextThinkerSlugs: ["locke", "rousseau", "xunzi"],
     nextComparisonSlugs: ["hobbes-locke", "hobbes-rousseau", "xunzi-hanfeizi"],
     nextThemeSlugs: ["state-legitimacy", "society-power"],
+    sourceIds: ["hobbes-leviathan", "sep-hobbes-moral-political"],
   },
   {
     slug: "kant-nietzsche",

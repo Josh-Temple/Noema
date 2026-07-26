@@ -1,16 +1,16 @@
-import { comparisons, themes, thinkers } from "@/lib/content";
+import { comparisons, sources, themes, thinkers } from "@/lib/content";
 import { PRIORITY_THEME_PATHWAYS } from "@/lib/pathways";
-import { Comparison, Theme, ThemePathwayConfig, Thinker } from "@/types/content";
+import { Comparison, SourceReference, Theme, ThemePathwayConfig, Thinker } from "@/types/content";
 
 export type ContentValidationIssue = {
-  scope: "thinker" | "comparison" | "theme" | "pathway";
+  scope: "source" | "thinker" | "comparison" | "theme" | "pathway";
   slug: string;
   message: string;
 };
 
-type ContentData = { thinkers: Thinker[]; comparisons: Comparison[]; themes: Theme[]; pathways: ThemePathwayConfig[] };
+type ContentData = { sources: SourceReference[]; thinkers: Thinker[]; comparisons: Comparison[]; themes: Theme[]; pathways: ThemePathwayConfig[] };
 const requiredStrings = {
-  thinker: ["slug", "nameJa", "nameEn", "eraLabel", "yearsLabel", "oneLiner", "quote", "coreQuestion", "basicAnswer", "opposedTo", "epistemology", "viewOfHuman", "ethicalPoliticalImplication", "laterInfluence"] as const,
+  thinker: ["slug", "nameJa", "nameEn", "eraLabel", "yearsLabel", "oneLiner", "coreQuestion", "basicAnswer", "opposedTo", "epistemology", "viewOfHuman", "ethicalPoliticalImplication", "laterInfluence"] as const,
   comparison: ["slug", "leftThinkerSlug", "rightThinkerSlug", "titleJa", "subtitle", "whyThisComparisonMatters", "summaryDifference", "commonGround"] as const,
   theme: ["slug", "titleJa", "shortDescription", "starterGuidance"] as const,
 };
@@ -51,11 +51,35 @@ const validateIdentity = (data: ContentData, issues: ContentValidationIssue[]) =
   });
 };
 
+const validateSources = (data: ContentData, issues: ContentValidationIssue[]) => {
+  duplicates(data.sources.map((source) => source.id)).forEach((id) => addIssue(issues, "source", id, `duplicate source ID: ${id || "<empty>"}`));
+  data.sources.forEach((source) => {
+    validateRequiredString(issues, "source", source.id, "id", source.id);
+    validateRequiredString(issues, "source", source.id, "title", source.title);
+    if (source.workType && !["primary", "secondary"].includes(source.workType)) addIssue(issues, "source", source.id, `invalid workType: ${source.workType}`);
+    validateOptionalString(issues, "source", source.id, "url", source.url);
+    if (source.url?.trim()) {
+      try { new URL(source.url); } catch { addIssue(issues, "source", source.id, `url must be an absolute http(s) URL: ${source.url}`); }
+      if (!/^https?:\/\//.test(source.url)) addIssue(issues, "source", source.id, `url must be an absolute http(s) URL: ${source.url}`);
+    }
+  });
+};
+
 const validateThinkers = (data: ContentData, issues: ContentValidationIssue[]) => {
+  const sourceIds = new Set(data.sources.map((item) => item.id));
   const thinkerSlugs = new Set(data.thinkers.map((item) => item.slug));
   const themeSlugs = new Set(data.themes.map((item) => item.slug));
   const comparisonSlugs = new Set(data.comparisons.map((item) => item.slug));
   data.thinkers.forEach((thinker) => {
+    const quote = thinker.quote;
+    validateRequiredString(issues, "thinker", thinker.slug, "quote.text", quote.text);
+    if (!quote.isParaphrase && !quote.sourceId) addIssue(issues, "thinker", thinker.slug, "direct quote must reference a source");
+    if (quote.sourceId && !sourceIds.has(quote.sourceId)) addIssue(issues, "thinker", thinker.slug, `quote references missing source: ${quote.sourceId}`);
+    if (quote.translationType === "published" && !(quote.translator?.trim() || (quote.sourceId && data.sources.find((source) => source.id === quote.sourceId)?.translator?.trim()))) addIssue(issues, "thinker", thinker.slug, "published translation must name a translator");
+    if (quote.translationType === "noema" && quote.translator?.trim()) addIssue(issues, "thinker", thinker.slug, "Noema translation must not name an external translator");
+    if (quote.originalText !== undefined && !quote.language?.trim()) addIssue(issues, "thinker", thinker.slug, "originalText requires language");
+    validateOptionalString(issues, "thinker", thinker.slug, "quote.locator", quote.locator);
+    validateOptionalString(issues, "thinker", thinker.slug, "quote.note", quote.note);
     validateStringArray(issues, "thinker", thinker.slug, "keyConcepts", thinker.keyConcepts);
     validateStringArray(issues, "thinker", thinker.slug, "keyWorks", thinker.keyWorks);
     validateSlugArray(issues, "thinker", thinker.slug, "relatedThinkerSlugs", thinker.relatedThinkerSlugs);
@@ -68,11 +92,16 @@ const validateThinkers = (data: ContentData, issues: ContentValidationIssue[]) =
 };
 
 const validateComparisons = (data: ContentData, issues: ContentValidationIssue[]) => {
+  const sourceIds = new Set(data.sources.map((item) => item.id));
   const thinkerSlugs = new Set(data.thinkers.map((item) => item.slug));
   const themeSlugs = new Set(data.themes.map((item) => item.slug));
   const comparisonSlugs = new Set(data.comparisons.map((item) => item.slug));
   const pairs = new Map<string, string>();
   data.comparisons.forEach((comparison) => {
+    if (comparison.sourceIds) {
+      validateSlugArray(issues, "comparison", comparison.slug, "sourceIds", comparison.sourceIds);
+      comparison.sourceIds.forEach((id) => { if (!sourceIds.has(id)) addIssue(issues, "comparison", comparison.slug, `sourceIds contains missing source: ${id}`); });
+    }
     if (!thinkerSlugs.has(comparison.leftThinkerSlug)) addIssue(issues, "comparison", comparison.slug, `leftThinkerSlug is missing: ${comparison.leftThinkerSlug}`);
     if (!thinkerSlugs.has(comparison.rightThinkerSlug)) addIssue(issues, "comparison", comparison.slug, `rightThinkerSlug is missing: ${comparison.rightThinkerSlug}`);
     if (comparison.leftThinkerSlug === comparison.rightThinkerSlug) addIssue(issues, "comparison", comparison.slug, "left and right thinkers must differ");
@@ -155,8 +184,9 @@ const validatePathways = (data: ContentData, issues: ContentValidationIssue[]) =
   });
 };
 
-export const validateContentRelations = (data: ContentData = { thinkers, comparisons, themes, pathways: PRIORITY_THEME_PATHWAYS }) => {
+export const validateContentRelations = (data: ContentData = { sources, thinkers, comparisons, themes, pathways: PRIORITY_THEME_PATHWAYS }) => {
   const issues: ContentValidationIssue[] = [];
+  validateSources(data, issues);
   validateIdentity(data, issues);
   validateThinkers(data, issues);
   validateComparisons(data, issues);
@@ -167,7 +197,7 @@ export const validateContentRelations = (data: ContentData = { thinkers, compari
 
 // Related lists also act as editorial “nearby reading” links in the existing data,
 // so directional mismatches are reported separately rather than failing builds.
-export const validateContentWarnings = (data: ContentData = { thinkers, comparisons, themes, pathways: PRIORITY_THEME_PATHWAYS }) => {
+export const validateContentWarnings = (data: ContentData = { sources, thinkers, comparisons, themes, pathways: PRIORITY_THEME_PATHWAYS }) => {
   const warnings: ContentValidationIssue[] = [];
   const comparisonBySlug = new Map(data.comparisons.map((item) => [item.slug, item]));
   const thinkerBySlug = new Map(data.thinkers.map((item) => [item.slug, item]));

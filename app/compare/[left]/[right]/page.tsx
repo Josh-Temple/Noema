@@ -6,6 +6,7 @@ import { CommonGroundCard } from "@/components/compare/CommonGroundCard";
 import { ComparisonSectionCard } from "@/components/compare/ComparisonSectionCard";
 import { NextStepCard } from "@/components/compare/NextStepCard";
 import { ComparisonReviewCard } from "@/components/compare/ComparisonReviewCard";
+import { ComparisonSources } from "@/components/compare/ComparisonSources";
 import { RecentTracker } from "@/components/common/RecentTracker";
 import { getComparisonByThinkerPair, getThinkerBySlug } from "@/lib/content";
 import { getComparisonReview, getCompareNextStepSuggestions } from "@/lib/recommendations";
@@ -32,6 +33,7 @@ export default function ComparePage({ params }: { params: { left: string; right:
         ))}
       </section>
       {review ? <ComparisonReviewCard review={review} /> : null}
+      <ComparisonSources sourceIds={comparison.sourceIds} />
       <section className="mb-6" aria-labelledby="next-step-heading">
         <h3 id="next-step-heading" className="mb-2 text-2xl font-bold">
           次の一歩

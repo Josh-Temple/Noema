@@ -1,8 +1,9 @@
-import { comparisons, themes, thinkers } from "@/lib/content";
+import { comparisons, sources, themes, thinkers } from "@/lib/content";
 import { validateContentRelations, validateContentWarnings } from "@/lib/contentValidation";
 import { PRIORITY_THEME_PATHWAYS } from "@/lib/pathways";
 
 const data = () => ({
+  sources: structuredClone(sources),
   thinkers: structuredClone(thinkers),
   comparisons: structuredClone(comparisons),
   themes: structuredClone(themes),
@@ -78,5 +79,28 @@ describe("content validation", () => {
 
   it("separates intentional editorial one-way relations as warnings", () => {
     expect(validateContentWarnings()).toEqual(expect.arrayContaining([expect.objectContaining({ scope: "thinker" }), expect.objectContaining({ scope: "theme" })]));
+  });
+
+  it("validates source identity and source references", () => {
+    const broken = data();
+    broken.sources.push(structuredClone(broken.sources[0]));
+    broken.thinkers[0].quote = { text: "direct", isParaphrase: false };
+    broken.thinkers[1].quote.sourceId = "missing-source";
+    const messages = validateContentRelations(broken).map((issue) => issue.message);
+    expect(messages).toContain(`duplicate source ID: ${broken.sources[0].id}`);
+    expect(messages).toContain("direct quote must reference a source");
+    expect(messages).toContain("quote references missing source: missing-source");
+  });
+
+  it("allows an unsourced summary but validates translations and comparison references", () => {
+    const broken = data();
+    broken.thinkers[0].quote = { text: "summary", isParaphrase: true };
+    broken.thinkers[1].quote = { text: "published", isParaphrase: false, sourceId: broken.sources[0].id, translationType: "published" };
+    broken.comparisons[0].sourceIds = [broken.sources[0].id, broken.sources[0].id, "missing-source"];
+    const messages = validateContentRelations(broken).map((issue) => issue.message);
+    expect(messages).not.toContain("summary must reference a source");
+    expect(messages).toContain("published translation must name a translator");
+    expect(messages).toContain(`sourceIds contains duplicate slug: ${broken.sources[0].id}`);
+    expect(messages).toContain("sourceIds contains missing source: missing-source");
   });
 });

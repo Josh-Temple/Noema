@@ -115,6 +115,13 @@ Build-blocking content issues make validation fail. Non-blocking editorial relat
 - `src/lib/content.ts`: lookup/derivation helpers
 - `src/lib/contentValidation.ts`: relation integrity validation
 
+### Adding citations and summaries
+
+1. Add a reusable bibliography record to `src/content/sources.ts`. Use a stable, unique `id`, mark the work as `primary` or `secondary`, and prefer chapter/section locators over edition-dependent page numbers.
+2. Set a thinker `quote` to a structured `Quotation`. Direct quotations require `sourceId` and `isParaphrase: false`; learning summaries use `isParaphrase: true` and should explain simplification in `note`. Use `translationType: "noema"` for Noema translations, or `"published"` with translator metadata for a published translation.
+3. Add optional `sourceIds` to a comparison. Reuse existing IDs instead of duplicating bibliography data; primary and secondary works are separated automatically in the UI.
+4. Run `npm run validate:content` before committing. Unmigrated summaries remain valid, while any supplied citation metadata is validated strictly.
+
 ## Legacy reference
 
 Wave 2 static prototype files are archived for historical parity/reference only:

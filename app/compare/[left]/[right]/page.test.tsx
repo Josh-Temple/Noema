@@ -17,4 +17,14 @@ describe("compare detail page", () => {
     expect(screen.getByText("この比較の要点")).toBeInTheDocument();
     expect(screen.getByText("短く確認する問い")).toBeInTheDocument();
   });
+
+  it("shows categorized references only for migrated comparisons", () => {
+    const { unmount } = render(<ComparePage params={{ left: "hobbes", right: "locke" }} />);
+    expect(screen.getByText("参照資料")).toBeInTheDocument();
+    expect(screen.getByText("一次資料")).toBeInTheDocument();
+    expect(screen.getByText("参考資料")).toBeInTheDocument();
+    unmount();
+    render(<ComparePage params={{ left: "descartes", right: "hume" }} />);
+    expect(screen.queryByText("参照資料")).not.toBeInTheDocument();
+  });
 });
