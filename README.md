@@ -46,8 +46,11 @@ npm run dev
 npm run lint
 npm run typecheck
 npm run test
+npm run validate:content
 npm run build
 ```
+
+`npm run build` always runs the same content-integrity validation before `next build`.
 
 ## Build and deployment
 

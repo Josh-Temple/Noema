@@ -2,11 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { PwaRegistrar } from "@/components/pwa/PwaRegistrar";
 import { AppShell } from "@/components/layout/AppShell";
-import { assertContentRelations } from "@/lib/contentValidation";
-
-if (process.env.NODE_ENV !== "production") {
-  assertContentRelations();
-}
 
 export const metadata: Metadata = {
   title: "Noema",

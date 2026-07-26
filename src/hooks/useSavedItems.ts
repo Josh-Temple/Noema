@@ -1,21 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { ItemKind, STORAGE_KEYS, StoredItem, loadStoredItems, saveStoredItems, toggleSavedItem } from "@/lib/storage";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
+import { ItemKind, STORAGE_KEYS, getStoredItemsServerSnapshot, getStoredItemsSnapshot, subscribeToStoredItems, toggleSavedItem, updateStoredItems } from "@/lib/storage";
 
 export const useSavedItems = () => {
-  const [savedItems, setSavedItems] = useState<StoredItem[]>([]);
-
-  useEffect(() => {
-    setSavedItems(loadStoredItems(STORAGE_KEYS.saved));
-  }, []);
+  const savedItems = useSyncExternalStore(
+    (listener) => subscribeToStoredItems(STORAGE_KEYS.saved, listener),
+    () => getStoredItemsSnapshot(STORAGE_KEYS.saved),
+    getStoredItemsServerSnapshot,
+  );
 
   const toggleSaved = useCallback((kind: ItemKind, slug: string) => {
-    setSavedItems((prev) => {
-      const next = toggleSavedItem(prev, { kind, slug });
-      saveStoredItems(STORAGE_KEYS.saved, next);
-      return next;
-    });
+    updateStoredItems(STORAGE_KEYS.saved, (items) => toggleSavedItem(items, { kind, slug }));
   }, []);
 
   const isSaved = useCallback(

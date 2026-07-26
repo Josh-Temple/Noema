@@ -11,6 +11,7 @@ export type StoredItem = {
 };
 
 const RECENT_LIMIT = 10;
+const EMPTY_ITEMS: StoredItem[] = [];
 
 const normalizeStoredItem = (value: unknown): StoredItem | null => {
   if (!value || typeof value !== "object") return null;
@@ -69,3 +70,49 @@ export const addRecentItem = (items: StoredItem[], nextItem: StoredItem) =>
     0,
     RECENT_LIMIT,
   );
+
+type StoreKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
+const snapshots = new Map<StoreKey, StoredItem[]>();
+const listeners = new Map<StoreKey, Set<() => void>>();
+let listensForStorage = false;
+
+const emit = (key: StoreKey) => listeners.get(key)?.forEach((listener) => listener());
+
+const ensureStorageListener = () => {
+  if (typeof window === "undefined" || listensForStorage) return;
+  window.addEventListener("storage", (event) => {
+    if (event.key !== STORAGE_KEYS.saved && event.key !== STORAGE_KEYS.recent) return;
+    snapshots.set(event.key, loadStoredItems(event.key));
+    emit(event.key);
+  });
+  listensForStorage = true;
+};
+
+export const getStoredItemsSnapshot = (key: StoreKey) => {
+  if (typeof window === "undefined") return EMPTY_ITEMS;
+  ensureStorageListener();
+  if (!snapshots.has(key)) snapshots.set(key, loadStoredItems(key));
+  return snapshots.get(key) ?? EMPTY_ITEMS;
+};
+
+export const getStoredItemsServerSnapshot = () => EMPTY_ITEMS;
+
+export const subscribeToStoredItems = (key: StoreKey, listener: () => void) => {
+  ensureStorageListener();
+  const keyListeners = listeners.get(key) ?? new Set<() => void>();
+  keyListeners.add(listener);
+  listeners.set(key, keyListeners);
+  return () => keyListeners.delete(listener);
+};
+
+export const updateStoredItems = (key: StoreKey, update: (items: StoredItem[]) => StoredItem[]) => {
+  const next = update(getStoredItemsSnapshot(key));
+  saveStoredItems(key, next);
+  snapshots.set(key, loadStoredItems(key));
+  emit(key);
+};
+
+/** Test-only cache reset; browser persistence is intentionally left untouched. */
+export const resetStoredItemsStore = () => {
+  snapshots.clear();
+};
