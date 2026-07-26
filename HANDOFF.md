@@ -1,5 +1,12 @@
 # Noema Wave 4 Handoff
 
+## PR #19 follow-up quality pass (2026-07-26)
+
+- Featured comparisons are now ranked only by stable editorial, saved, recent, thinker, and theme signals with a slug tie-break; date-based variation remains isolated in `getTodayPick`, which accepts an optional `now` for deterministic tests.
+- The content-validation command deliberately prints non-blocking editorial warnings while issues still stop production builds. Validation now also covers display-value arrays and pathway labels, optional descriptions, group IDs, and per-section slug duplicates.
+- A rendered `SaveToggleButton` integration test verifies immediate save/unsave synchronization between real UI consumers and localStorage. The existing hook and cross-tab storage-event coverage remains in place.
+- No content rewrite, UI redesign, dependencies, environment variables, or service-worker changes were introduced. Intentional cross-section pathway repetition remains allowed.
+
 ## Quality consistency pass (2026-07-25)
 
 - Home comparison recommendations now rank every candidate with editorial, saved-comparison, related-thinker, and related-theme signals. Editorial picks remain a modest boost rather than an immutable prefix; ranking is deterministic.

@@ -9,6 +9,7 @@ import {
   getSavedRevisitSuggestions,
   getSavedStudyGroups,
   getThinkerRecommendations,
+  getTodayPick,
   daySeedFor,
 } from "@/lib/recommendations";
 
@@ -18,6 +19,16 @@ describe("recommendations", () => {
     const second = getFeaturedComparisons({ limit: 6 }).map((item) => item.slug);
     expect(first).toEqual(second);
     expect(first).toEqual(expect.arrayContaining(["mencius-xunzi", "hanfeizi-hobbes"]));
+  });
+
+  it("does not change featured rankings when the execution date changes", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-01-01T00:00:00Z"));
+    const winter = getFeaturedComparisons({ recent: [{ kind: "thinker", slug: "kant" }], limit: 8 }).map((item) => item.slug);
+    vi.setSystemTime(new Date("2026-08-01T00:00:00Z"));
+    const summer = getFeaturedComparisons({ recent: [{ kind: "thinker", slug: "kant" }], limit: 8 }).map((item) => item.slug);
+    vi.useRealTimers();
+    expect(summer).toEqual(winter);
   });
 
   it("lets strong history change ranking and promote related comparisons", () => {
@@ -43,6 +54,16 @@ describe("recommendations", () => {
     expect(daySeedFor(new Date("2026-01-10T15:00:00Z"))).toBe(20260111);
     expect(daySeedFor(new Date("2026-10-31T15:00:00Z"))).toBe(20261101);
     expect(daySeedFor(new Date("2026-01-10T15:00:00Z"))).not.toBe(daySeedFor(new Date("2026-10-31T15:00:00Z")));
+  });
+
+  it("keeps date-based variation inside today's pick", () => {
+    const first = getTodayPick({ now: new Date("2026-01-01T00:00:00Z") });
+    const later = getTodayPick({ now: new Date("2026-01-02T00:00:00Z") });
+    expect([first.thinker.slug, first.comparison.slug, first.theme.slug]).not.toEqual([
+      later.thinker.slug,
+      later.comparison.slug,
+      later.theme.slug,
+    ]);
   });
 
   it("uses recent and saved context in home recommendations", () => {

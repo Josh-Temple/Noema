@@ -38,6 +38,44 @@ describe("content validation", () => {
     expect(messages).toContain("starterComparisonSlugs contains missing comparison: missing-comparison");
   });
 
+  it("validates thinker and comparison display arrays as values rather than slugs", () => {
+    const broken = data();
+    broken.thinkers[0].keyConcepts = ["理性", " ", "理性"];
+    broken.thinkers[0].keyWorks = ["純粋理性批判", "純粋理性批判"];
+    broken.comparisons[0].whatToWatch = ["相違点", "", "相違点"];
+    const messages = validateContentRelations(broken).map((issue) => issue.message);
+    expect(messages).toEqual(expect.arrayContaining([
+      "keyConcepts contains empty value",
+      "keyConcepts contains duplicate value: 理性",
+      "keyWorks contains duplicate value: 純粋理性批判",
+      "whatToWatch contains empty value",
+      "whatToWatch contains duplicate value: 相違点",
+    ]));
+  });
+
+  it("validates pathway display metadata, group ids, and per-section duplicates", () => {
+    const broken = data();
+    broken.pathways[0].eyebrow = " ";
+    broken.pathways[0].groups[0].description = " ";
+    broken.pathways[0].groups[1].id = broken.pathways[0].groups[0].id;
+    broken.pathways[0].groups[0].title = "";
+    broken.pathways[0].readingOrder!.title = " ";
+    broken.pathways[0].readingOrder!.first.title = "";
+    broken.pathways[0].readingOrder!.first.comparisonSlugs.push(
+      broken.pathways[0].readingOrder!.first.comparisonSlugs[0],
+    );
+    const messages = validateContentRelations(broken).map((issue) => issue.message);
+    expect(messages).toEqual(expect.arrayContaining([
+      "eyebrow must not be empty",
+      "group ids contains duplicate value: bridges-20th",
+      "group:bridges-20th.title must not be empty",
+      "group:bridges-20th.description must not be empty when provided",
+      "readingOrder.title must not be empty",
+      "readingOrder:first.title must not be empty",
+      expect.stringContaining("readingOrder:first contains duplicate slug:"),
+    ]));
+  });
+
   it("separates intentional editorial one-way relations as warnings", () => {
     expect(validateContentWarnings()).toEqual(expect.arrayContaining([expect.objectContaining({ scope: "thinker" }), expect.objectContaining({ scope: "theme" })]));
   });

@@ -15,10 +15,8 @@ export const daySeedFor = (now: Date) => {
   return Number(`${part("year")}${part("month")}${part("day")}`);
 };
 
-const daySeed = () => daySeedFor(new Date());
-
-const pick = <T,>(items: T[], offset = 0): T => {
-  const index = (daySeed() + offset) % items.length;
+const pick = <T,>(items: T[], seed: number, offset = 0): T => {
+  const index = (seed + offset) % items.length;
   return items[index];
 };
 
@@ -132,27 +130,32 @@ const dedupeSuggestions = <T extends { href: string }>(items: T[]) =>
 
 export const getFeaturedComparisons = ({ recent = [], saved = [], limit = 4 }: { recent?: StoredItem[]; saved?: StoredItem[]; limit?: number } = {}) => {
   const pinned = getEditorialPinnedComparisons();
+  const editorialOrder = new Map(pinned.map((comparison, index) => [comparison.slug, index]));
   const contextSignals = collectContextSignals([...recent, ...saved]);
-  const todaySeed = daySeed();
   const scored = comparisons
     .map((item) => ({
       item,
       score:
-        scoreComparison(item.slug, contextSignals, pinned.some((p) => p.slug === item.slug) ? 2 : 0) +
-        ((todaySeed + item.slug.length) % 3),
+        scoreComparison(item.slug, contextSignals, pinned.some((p) => p.slug === item.slug) ? 2 : 0),
     }))
-    .sort((a, b) => b.score - a.score || a.item.slug.localeCompare(b.item.slug))
+    .sort((a, b) =>
+      b.score - a.score ||
+      (editorialOrder.get(a.item.slug) ?? Number.MAX_SAFE_INTEGER) -
+        (editorialOrder.get(b.item.slug) ?? Number.MAX_SAFE_INTEGER) ||
+      a.item.slug.localeCompare(b.item.slug),
+    )
     .map((entry) => entry.item);
 
   return uniqBySlug(scored).slice(0, Math.max(0, limit));
 };
 
-export const getTodayPick = ({ recent = [], saved = [] }: { recent?: StoredItem[]; saved?: StoredItem[] } = {}) => {
+export const getTodayPick = ({ recent = [], saved = [], now = new Date() }: { recent?: StoredItem[]; saved?: StoredItem[]; now?: Date } = {}) => {
+  const todaySeed = daySeedFor(now);
   const blended = getFeaturedComparisons({ recent, saved, limit: 6 });
   return {
-    thinker: pick(thinkers, 0),
-    comparison: blended[(daySeed() + 2) % blended.length] ?? pick(comparisons, 3),
-    theme: pick(themes, 5),
+    thinker: pick(thinkers, todaySeed, 0),
+    comparison: blended[(todaySeed + 2) % blended.length] ?? pick(comparisons, todaySeed, 3),
+    theme: pick(themes, todaySeed, 5),
   };
 };
 
