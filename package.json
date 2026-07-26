@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --exclude src/lib/contentValidation.build.test.ts",
     "validate:content": "vitest run src/lib/contentValidation.build.test.ts"
   },
   "dependencies": {

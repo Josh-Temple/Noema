@@ -51,6 +51,8 @@ npm run build
 ```
 
 `npm run build` always runs the same content-integrity validation before `next build`.
+Build-blocking content issues make validation fail. Non-blocking editorial relation warnings are printed as
+`Content validation warnings:` entries by `npm run validate:content` (and therefore by production builds), while validation continues with exit code 0.
 
 ## Build and deployment
 

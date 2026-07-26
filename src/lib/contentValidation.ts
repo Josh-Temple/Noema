@@ -16,15 +16,37 @@ const requiredStrings = {
 };
 
 const duplicates = (values: string[]) => [...new Set(values.filter((value, index) => values.indexOf(value) !== index))];
-const addDuplicates = (issues: ContentValidationIssue[], scope: ContentValidationIssue["scope"], slug: string, field: string, values: string[]) =>
-  duplicates(values).forEach((value) => issues.push({ scope, slug, message: `${field} contains duplicate slug: ${value}` }));
+const addIssue = (issues: ContentValidationIssue[], scope: ContentValidationIssue["scope"], slug: string, message: string) =>
+  issues.push({ scope, slug: slug || "<empty>", message });
+
+const validateRequiredString = (issues: ContentValidationIssue[], scope: ContentValidationIssue["scope"], slug: string, field: string, value: string) => {
+  if (!value.trim()) addIssue(issues, scope, slug, `${field} must not be empty`);
+};
+
+const validateOptionalString = (issues: ContentValidationIssue[], scope: ContentValidationIssue["scope"], slug: string, field: string, value?: string) => {
+  if (value !== undefined && !value.trim()) addIssue(issues, scope, slug, `${field} must not be empty when provided`);
+};
+
+const validateSlugArray = (issues: ContentValidationIssue[], scope: ContentValidationIssue["scope"], slug: string, field: string, values: string[]) => {
+  values.forEach((value) => {
+    if (!value.trim()) addIssue(issues, scope, slug, `${field} contains empty slug`);
+  });
+  duplicates(values).forEach((value) => addIssue(issues, scope, slug, `${field} contains duplicate slug: ${value || "<empty>"}`));
+};
+
+const validateStringArray = (issues: ContentValidationIssue[], scope: ContentValidationIssue["scope"], slug: string, field: string, values: string[]) => {
+  values.forEach((value) => {
+    if (!value.trim()) addIssue(issues, scope, slug, `${field} contains empty value`);
+  });
+  duplicates(values).forEach((value) => addIssue(issues, scope, slug, `${field} contains duplicate value: ${value || "<empty>"}`));
+};
 
 const validateIdentity = (data: ContentData, issues: ContentValidationIssue[]) => {
   (["thinker", "comparison", "theme"] as const).forEach((scope) => {
     const entries = scope === "thinker" ? data.thinkers : scope === "comparison" ? data.comparisons : data.themes;
-    duplicates(entries.map((entry) => entry.slug)).forEach((slug) => issues.push({ scope, slug, message: `duplicate slug: ${slug || "<empty>"}` }));
+    duplicates(entries.map((entry) => entry.slug)).forEach((slug) => addIssue(issues, scope, slug, `duplicate slug: ${slug || "<empty>"}`));
     entries.forEach((entry) => requiredStrings[scope].forEach((field) => {
-      if (!String(entry[field as keyof typeof entry] ?? "").trim()) issues.push({ scope, slug: entry.slug || "<empty>", message: `${field} must not be empty` });
+      validateRequiredString(issues, scope, entry.slug, field, String(entry[field as keyof typeof entry] ?? ""));
     }));
   });
 };
@@ -32,17 +54,16 @@ const validateIdentity = (data: ContentData, issues: ContentValidationIssue[]) =
 const validateThinkers = (data: ContentData, issues: ContentValidationIssue[]) => {
   const thinkerSlugs = new Set(data.thinkers.map((item) => item.slug));
   const themeSlugs = new Set(data.themes.map((item) => item.slug));
-  const comparisonBySlug = new Map(data.comparisons.map((item) => [item.slug, item]));
+  const comparisonSlugs = new Set(data.comparisons.map((item) => item.slug));
   data.thinkers.forEach((thinker) => {
-    addDuplicates(issues, "thinker", thinker.slug, "relatedThinkerSlugs", thinker.relatedThinkerSlugs);
-    addDuplicates(issues, "thinker", thinker.slug, "relatedThemeSlugs", thinker.relatedThemeSlugs);
-    addDuplicates(issues, "thinker", thinker.slug, "relatedComparisonSlugs", thinker.relatedComparisonSlugs);
-    thinker.relatedThinkerSlugs.forEach((slug) => { if (!thinkerSlugs.has(slug)) issues.push({ scope: "thinker", slug: thinker.slug, message: `relatedThinkerSlugs contains missing thinker: ${slug}` }); });
-    thinker.relatedThemeSlugs.forEach((slug) => { if (!themeSlugs.has(slug)) issues.push({ scope: "thinker", slug: thinker.slug, message: `relatedThemeSlugs contains missing theme: ${slug}` }); });
-    thinker.relatedComparisonSlugs.forEach((slug) => {
-      const comparison = comparisonBySlug.get(slug);
-      if (!comparison) issues.push({ scope: "thinker", slug: thinker.slug, message: `relatedComparisonSlugs contains missing comparison: ${slug}` });
-    });
+    validateStringArray(issues, "thinker", thinker.slug, "keyConcepts", thinker.keyConcepts);
+    validateStringArray(issues, "thinker", thinker.slug, "keyWorks", thinker.keyWorks);
+    validateSlugArray(issues, "thinker", thinker.slug, "relatedThinkerSlugs", thinker.relatedThinkerSlugs);
+    validateSlugArray(issues, "thinker", thinker.slug, "relatedThemeSlugs", thinker.relatedThemeSlugs);
+    validateSlugArray(issues, "thinker", thinker.slug, "relatedComparisonSlugs", thinker.relatedComparisonSlugs);
+    thinker.relatedThinkerSlugs.forEach((slug) => { if (!thinkerSlugs.has(slug)) addIssue(issues, "thinker", thinker.slug, `relatedThinkerSlugs contains missing thinker: ${slug}`); });
+    thinker.relatedThemeSlugs.forEach((slug) => { if (!themeSlugs.has(slug)) addIssue(issues, "thinker", thinker.slug, `relatedThemeSlugs contains missing theme: ${slug}`); });
+    thinker.relatedComparisonSlugs.forEach((slug) => { if (!comparisonSlugs.has(slug)) addIssue(issues, "thinker", thinker.slug, `relatedComparisonSlugs contains missing comparison: ${slug}`); });
   });
 };
 
@@ -52,49 +73,95 @@ const validateComparisons = (data: ContentData, issues: ContentValidationIssue[]
   const comparisonSlugs = new Set(data.comparisons.map((item) => item.slug));
   const pairs = new Map<string, string>();
   data.comparisons.forEach((comparison) => {
-    if (!thinkerSlugs.has(comparison.leftThinkerSlug)) issues.push({ scope: "comparison", slug: comparison.slug, message: `leftThinkerSlug is missing: ${comparison.leftThinkerSlug}` });
-    if (!thinkerSlugs.has(comparison.rightThinkerSlug)) issues.push({ scope: "comparison", slug: comparison.slug, message: `rightThinkerSlug is missing: ${comparison.rightThinkerSlug}` });
-    if (comparison.leftThinkerSlug === comparison.rightThinkerSlug) issues.push({ scope: "comparison", slug: comparison.slug, message: "left and right thinkers must differ" });
+    if (!thinkerSlugs.has(comparison.leftThinkerSlug)) addIssue(issues, "comparison", comparison.slug, `leftThinkerSlug is missing: ${comparison.leftThinkerSlug}`);
+    if (!thinkerSlugs.has(comparison.rightThinkerSlug)) addIssue(issues, "comparison", comparison.slug, `rightThinkerSlug is missing: ${comparison.rightThinkerSlug}`);
+    if (comparison.leftThinkerSlug === comparison.rightThinkerSlug) addIssue(issues, "comparison", comparison.slug, "left and right thinkers must differ");
     const pair = [comparison.leftThinkerSlug, comparison.rightThinkerSlug].sort().join("|");
     const existing = pairs.get(pair);
-    if (existing) issues.push({ scope: "comparison", slug: comparison.slug, message: `duplicate thinker pair (including reversed order): ${existing}` }); else pairs.set(pair, comparison.slug);
-    (["themeSlugs", "nextThinkerSlugs", "nextComparisonSlugs", "nextThemeSlugs"] as const).forEach((field) => addDuplicates(issues, "comparison", comparison.slug, field, comparison[field]));
-    comparison.themeSlugs.forEach((slug) => { if (!themeSlugs.has(slug)) issues.push({ scope: "comparison", slug: comparison.slug, message: `themeSlugs contains missing theme: ${slug}` }); });
-    comparison.nextThinkerSlugs.forEach((slug) => { if (!thinkerSlugs.has(slug)) issues.push({ scope: "comparison", slug: comparison.slug, message: `nextThinkerSlugs contains missing thinker: ${slug}` }); });
-    comparison.nextThemeSlugs.forEach((slug) => { if (!themeSlugs.has(slug)) issues.push({ scope: "comparison", slug: comparison.slug, message: `nextThemeSlugs contains missing theme: ${slug}` }); });
-    comparison.nextComparisonSlugs.forEach((slug) => { if (!comparisonSlugs.has(slug)) issues.push({ scope: "comparison", slug: comparison.slug, message: `nextComparisonSlugs contains missing comparison: ${slug}` }); if (slug === comparison.slug) issues.push({ scope: "comparison", slug: comparison.slug, message: "nextComparisonSlugs must not contain itself" }); });
-    if (!comparison.sections.length) issues.push({ scope: "comparison", slug: comparison.slug, message: "sections must not be empty" });
-    comparison.sections.forEach((section, index) => (["title", "leftView", "rightView", "takeaway"] as const).forEach((field) => { if (!section[field].trim()) issues.push({ scope: "comparison", slug: comparison.slug, message: `sections[${index}].${field} must not be empty` }); }));
+    if (existing) addIssue(issues, "comparison", comparison.slug, `duplicate thinker pair (including reversed order): ${existing}`);
+    else pairs.set(pair, comparison.slug);
+
+    validateStringArray(issues, "comparison", comparison.slug, "whatToWatch", comparison.whatToWatch);
+    (["themeSlugs", "nextThinkerSlugs", "nextComparisonSlugs", "nextThemeSlugs"] as const).forEach((field) =>
+      validateSlugArray(issues, "comparison", comparison.slug, field, comparison[field]));
+    comparison.themeSlugs.forEach((slug) => { if (!themeSlugs.has(slug)) addIssue(issues, "comparison", comparison.slug, `themeSlugs contains missing theme: ${slug}`); });
+    comparison.nextThinkerSlugs.forEach((slug) => { if (!thinkerSlugs.has(slug)) addIssue(issues, "comparison", comparison.slug, `nextThinkerSlugs contains missing thinker: ${slug}`); });
+    comparison.nextThemeSlugs.forEach((slug) => { if (!themeSlugs.has(slug)) addIssue(issues, "comparison", comparison.slug, `nextThemeSlugs contains missing theme: ${slug}`); });
+    comparison.nextComparisonSlugs.forEach((slug) => {
+      if (!comparisonSlugs.has(slug)) addIssue(issues, "comparison", comparison.slug, `nextComparisonSlugs contains missing comparison: ${slug}`);
+      if (slug === comparison.slug) addIssue(issues, "comparison", comparison.slug, "nextComparisonSlugs must not contain itself");
+    });
+    if (!comparison.sections.length) addIssue(issues, "comparison", comparison.slug, "sections must not be empty");
+    comparison.sections.forEach((section, index) => (["title", "leftView", "rightView", "takeaway"] as const).forEach((field) =>
+      validateRequiredString(issues, "comparison", comparison.slug, `sections[${index}].${field}`, section[field])));
   });
 };
 
 const validateThemes = (data: ContentData, issues: ContentValidationIssue[]) => {
   const thinkerSlugs = new Set(data.thinkers.map((item) => item.slug));
-  const comparisonBySlug = new Map(data.comparisons.map((item) => [item.slug, item]));
+  const comparisonSlugs = new Set(data.comparisons.map((item) => item.slug));
   data.themes.forEach((theme) => {
-    addDuplicates(issues, "theme", theme.slug, "relatedThinkerSlugs", theme.relatedThinkerSlugs);
-    addDuplicates(issues, "theme", theme.slug, "relatedComparisonSlugs", theme.relatedComparisonSlugs);
-    theme.relatedThinkerSlugs.forEach((slug) => { if (!thinkerSlugs.has(slug)) issues.push({ scope: "theme", slug: theme.slug, message: `relatedThinkerSlugs contains missing thinker: ${slug}` }); });
-    theme.relatedComparisonSlugs.forEach((slug) => { if (!comparisonBySlug.has(slug)) issues.push({ scope: "theme", slug: theme.slug, message: `relatedComparisonSlugs contains missing comparison: ${slug}` }); });
+    validateSlugArray(issues, "theme", theme.slug, "relatedThinkerSlugs", theme.relatedThinkerSlugs);
+    validateSlugArray(issues, "theme", theme.slug, "relatedComparisonSlugs", theme.relatedComparisonSlugs);
+    theme.relatedThinkerSlugs.forEach((slug) => { if (!thinkerSlugs.has(slug)) addIssue(issues, "theme", theme.slug, `relatedThinkerSlugs contains missing thinker: ${slug}`); });
+    theme.relatedComparisonSlugs.forEach((slug) => { if (!comparisonSlugs.has(slug)) addIssue(issues, "theme", theme.slug, `relatedComparisonSlugs contains missing comparison: ${slug}`); });
   });
 };
 
 const validatePathways = (data: ContentData, issues: ContentValidationIssue[]) => {
   const themeSlugs = new Set(data.themes.map((item) => item.slug));
   const comparisonSlugs = new Set(data.comparisons.map((item) => item.slug));
-  duplicates(data.pathways.map((item) => item.slug)).forEach((slug) => issues.push({ scope: "pathway", slug, message: `duplicate pathway slug: ${slug}` }));
+  duplicates(data.pathways.map((item) => item.slug)).forEach((slug) => addIssue(issues, "pathway", slug, `duplicate pathway slug: ${slug}`));
   data.pathways.forEach((pathway) => {
-    if (!themeSlugs.has(pathway.slug)) issues.push({ scope: "pathway", slug: pathway.slug, message: "slug does not reference an existing theme" });
-    const sections: Array<[string, string[]]> = [["starterComparisonSlugs", pathway.starterComparisonSlugs], ...pathway.groups.map((group) => [`group:${group.id}`, group.comparisonSlugs] as [string, string[]])];
-    if (pathway.readingOrder) sections.push(["readingOrder:first", pathway.readingOrder.first.comparisonSlugs], ["readingOrder:next", pathway.readingOrder.next?.comparisonSlugs ?? []], ["readingOrder:detour", pathway.readingOrder.detour?.comparisonSlugs ?? []]);
-    if (pathway.readingOrder && !pathway.readingOrder.first.comparisonSlugs.length) issues.push({ scope: "pathway", slug: pathway.slug, message: "readingOrder:first must not be empty" });
-    sections.forEach(([name, slugs]) => { addDuplicates(issues, "pathway", pathway.slug, name, slugs); slugs.forEach((slug) => { if (!comparisonSlugs.has(slug)) issues.push({ scope: "pathway", slug: pathway.slug, message: `${name} contains missing comparison: ${slug}` }); }); });
+    validateRequiredString(issues, "pathway", pathway.slug, "eyebrow", pathway.eyebrow);
+    validateRequiredString(issues, "pathway", pathway.slug, "starterLabel", pathway.starterLabel);
+    validateRequiredString(issues, "pathway", pathway.slug, "starterDescription", pathway.starterDescription);
+    if (!themeSlugs.has(pathway.slug)) addIssue(issues, "pathway", pathway.slug, "slug does not reference an existing theme");
+    validateSlugArray(issues, "pathway", pathway.slug, "starterComparisonSlugs", pathway.starterComparisonSlugs);
+
+    validateStringArray(issues, "pathway", pathway.slug, "group ids", pathway.groups.map((group) => group.id));
+    pathway.groups.forEach((group) => {
+      validateRequiredString(issues, "pathway", pathway.slug, `group:${group.id}.title`, group.title);
+      validateOptionalString(issues, "pathway", pathway.slug, `group:${group.id}.description`, group.description);
+      validateSlugArray(issues, "pathway", pathway.slug, `group:${group.id}`, group.comparisonSlugs);
+    });
+
+    const routes = pathway.readingOrder
+      ? ([
+          ["first", pathway.readingOrder.first],
+          ["next", pathway.readingOrder.next],
+          ["detour", pathway.readingOrder.detour],
+        ].filter((entry): entry is [string, NonNullable<typeof pathway.readingOrder>["first"]] => Boolean(entry[1])))
+      : [];
+    if (pathway.readingOrder) {
+      validateOptionalString(issues, "pathway", pathway.slug, "readingOrder.eyebrow", pathway.readingOrder.eyebrow);
+      validateRequiredString(issues, "pathway", pathway.slug, "readingOrder.title", pathway.readingOrder.title);
+      if (!pathway.readingOrder.first.comparisonSlugs.length) addIssue(issues, "pathway", pathway.slug, "readingOrder:first must not be empty");
+    }
+    routes.forEach(([name, route]) => {
+      validateRequiredString(issues, "pathway", pathway.slug, `readingOrder:${name}.title`, route.title);
+      validateOptionalString(issues, "pathway", pathway.slug, `readingOrder:${name}.description`, route.description);
+      validateSlugArray(issues, "pathway", pathway.slug, `readingOrder:${name}`, route.comparisonSlugs);
+    });
+
+    const sections: Array<[string, string[]]> = [
+      ["starterComparisonSlugs", pathway.starterComparisonSlugs],
+      ...pathway.groups.map((group) => [`group:${group.id}`, group.comparisonSlugs] as [string, string[]]),
+      ...routes.map(([name, route]) => [`readingOrder:${name}`, route.comparisonSlugs] as [string, string[]]),
+    ];
+    sections.forEach(([name, slugs]) => slugs.forEach((slug) => {
+      if (!comparisonSlugs.has(slug)) addIssue(issues, "pathway", pathway.slug, `${name} contains missing comparison: ${slug}`);
+    }));
   });
 };
 
 export const validateContentRelations = (data: ContentData = { thinkers, comparisons, themes, pathways: PRIORITY_THEME_PATHWAYS }) => {
   const issues: ContentValidationIssue[] = [];
-  validateIdentity(data, issues); validateThinkers(data, issues); validateComparisons(data, issues); validateThemes(data, issues); validatePathways(data, issues);
+  validateIdentity(data, issues);
+  validateThinkers(data, issues);
+  validateComparisons(data, issues);
+  validateThemes(data, issues);
+  validatePathways(data, issues);
   return issues;
 };
 
@@ -107,24 +174,27 @@ export const validateContentWarnings = (data: ContentData = { thinkers, comparis
   const themeBySlug = new Map(data.themes.map((item) => [item.slug, item]));
   data.thinkers.forEach((thinker) => thinker.relatedComparisonSlugs.forEach((slug) => {
     const comparison = comparisonBySlug.get(slug);
-    if (comparison && comparison.leftThinkerSlug !== thinker.slug && comparison.rightThinkerSlug !== thinker.slug) warnings.push({ scope: "thinker", slug: thinker.slug, message: `editorial related comparison does not contain thinker: ${slug}` });
+    if (comparison && comparison.leftThinkerSlug !== thinker.slug && comparison.rightThinkerSlug !== thinker.slug) addIssue(warnings, "thinker", thinker.slug, `editorial related comparison does not contain thinker: ${slug}`);
   }));
   data.themes.forEach((theme) => theme.relatedComparisonSlugs.forEach((slug) => {
     const comparison = comparisonBySlug.get(slug);
-    if (comparison && !comparison.themeSlugs.includes(theme.slug)) warnings.push({ scope: "theme", slug: theme.slug, message: `editorial related comparison does not contain theme: ${slug}` });
+    if (comparison && !comparison.themeSlugs.includes(theme.slug)) addIssue(warnings, "theme", theme.slug, `editorial related comparison does not contain theme: ${slug}`);
   }));
   data.thinkers.forEach((thinker) => thinker.relatedThemeSlugs.forEach((slug) => {
     const theme = themeBySlug.get(slug);
-    if (theme && !theme.relatedThinkerSlugs.includes(thinker.slug)) warnings.push({ scope: "thinker", slug: thinker.slug, message: `theme does not link back to thinker: ${slug}` });
+    if (theme && !theme.relatedThinkerSlugs.includes(thinker.slug)) addIssue(warnings, "thinker", thinker.slug, `theme does not link back to thinker: ${slug}`);
   }));
   data.themes.forEach((theme) => theme.relatedThinkerSlugs.forEach((slug) => {
     const thinker = thinkerBySlug.get(slug);
-    if (thinker && !thinker.relatedThemeSlugs.includes(theme.slug)) warnings.push({ scope: "theme", slug: theme.slug, message: `thinker does not link back to theme: ${slug}` });
+    if (thinker && !thinker.relatedThemeSlugs.includes(theme.slug)) addIssue(warnings, "theme", theme.slug, `thinker does not link back to theme: ${slug}`);
   }));
   return warnings;
 };
 
+export const formatContentIssues = (heading: string, issues: ContentValidationIssue[]) =>
+  `${heading}\n${issues.map((issue) => `- [${issue.scope}:${issue.slug}] ${issue.message}`).join("\n")}`;
+
 export const assertContentRelations = () => {
   const issues = validateContentRelations();
-  if (issues.length) throw new Error(`Content validation failed:\n${issues.map((issue) => `- [${issue.scope}:${issue.slug}] ${issue.message}`).join("\n")}`);
+  if (issues.length) throw new Error(formatContentIssues("Content validation failed:", issues));
 };
