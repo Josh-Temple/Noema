@@ -1,5 +1,14 @@
 # Noema Wave 4 Handoff
 
+## Quality consistency pass (2026-07-25)
+
+- Home comparison recommendations now rank every candidate with editorial, saved-comparison, related-thinker, and related-theme signals. Editorial picks remain a modest boost rather than an immutable prefix; ranking is deterministic.
+- Daily selection uses an injectable, zero-padded `YYYYMMDD` seed at the `Asia/Tokyo` boundary.
+- Saved and recent hooks now share a small `useSyncExternalStore`-based browser store, persist to localStorage, synchronize consumers immediately, and accept cross-tab `storage` events without accessing `window` during SSR.
+- `npm run build` explicitly runs modular content and pathway validation before Next.js. Validation now covers identities, required text, duplicate array entries and thinker pairs, references, comparison sections, and pathway/reading-order references.
+- Existing thinker/theme relation lists sometimes intentionally describe nearby editorial reading rather than strict bidirectional membership. Known comparison-membership and thinker/theme reciprocity mismatches are exposed by `validateContentWarnings()` and remain non-blocking instead of triggering a large content rewrite.
+- No new dependencies, environment variables, content, visual changes, or service-worker changes were introduced.
+
 ## Current product state
 
 Noema remains a single root-level Next.js App Router application focused on calm, comparison-first philosophy learning. Sprint 10 did not add another large content pack; instead it re-edited the existing 20th-century bridge corridor and East Asian corridor so they are easier to enter through themes, home, search, and recommendation ordering.

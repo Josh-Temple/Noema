@@ -9,12 +9,40 @@ import {
   getSavedRevisitSuggestions,
   getSavedStudyGroups,
   getThinkerRecommendations,
+  daySeedFor,
 } from "@/lib/recommendations";
 
 describe("recommendations", () => {
-  it("surfaces east asian second-wave comparisons in featured list", () => {
-    const featured = getFeaturedComparisons({ limit: 6 }).map((item) => item.slug);
-    expect(featured).toEqual(expect.arrayContaining(["mencius-xunzi", "hanfeizi-hobbes"]));
+  it("returns stable editorial recommendations without history", () => {
+    const first = getFeaturedComparisons({ limit: 6 }).map((item) => item.slug);
+    const second = getFeaturedComparisons({ limit: 6 }).map((item) => item.slug);
+    expect(first).toEqual(second);
+    expect(first).toEqual(expect.arrayContaining(["mencius-xunzi", "hanfeizi-hobbes"]));
+  });
+
+  it("lets strong history change ranking and promote related comparisons", () => {
+    const baseline = getFeaturedComparisons({ limit: 100 }).map((item) => item.slug);
+    const contextual = getFeaturedComparisons({
+      saved: [{ kind: "comparison", slug: "descartes-locke" }],
+      recent: [{ kind: "thinker", slug: "locke" }, { kind: "theme", slug: "knowledge" }],
+      limit: 100,
+    }).map((item) => item.slug);
+    expect(contextual.slice(0, 4)).not.toEqual(baseline.slice(0, 4));
+    expect(contextual.indexOf("descartes-locke")).toBeLessThan(baseline.indexOf("descartes-locke"));
+    expect(contextual).toEqual(getFeaturedComparisons({ saved: [{ kind: "comparison", slug: "descartes-locke" }], recent: [{ kind: "thinker", slug: "locke" }, { kind: "theme", slug: "knowledge" }], limit: 100 }).map((item) => item.slug));
+  });
+
+  it("respects limits without duplicates", () => {
+    const items = getFeaturedComparisons({ limit: 7 });
+    expect(items).toHaveLength(7);
+    expect(new Set(items.map((item) => item.slug)).size).toBe(7);
+    expect(getFeaturedComparisons({ limit: 0 })).toEqual([]);
+  });
+
+  it("uses collision-free Tokyo calendar seeds", () => {
+    expect(daySeedFor(new Date("2026-01-10T15:00:00Z"))).toBe(20260111);
+    expect(daySeedFor(new Date("2026-10-31T15:00:00Z"))).toBe(20261101);
+    expect(daySeedFor(new Date("2026-01-10T15:00:00Z"))).not.toBe(daySeedFor(new Date("2026-10-31T15:00:00Z")));
   });
 
   it("uses recent and saved context in home recommendations", () => {

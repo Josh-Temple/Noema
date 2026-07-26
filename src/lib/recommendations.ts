@@ -4,10 +4,18 @@ import { comparisonPath, themePath, thinkerPath } from "@/lib/routes";
 import { getComparisonBySlugs, getPriorityThemePathway, isEastAsianComparison, isPriorityTheme, isTwentiethCenturyComparison } from "@/lib/pathways";
 import { StoredItem } from "@/lib/storage";
 
-const daySeed = () => {
-  const now = new Date();
-  return Number(`${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`);
+export const daySeedFor = (now: Date) => {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((item) => item.type === type)?.value ?? "00";
+  return Number(`${part("year")}${part("month")}${part("day")}`);
 };
+
+const daySeed = () => daySeedFor(new Date());
 
 const pick = <T,>(items: T[], offset = 0): T => {
   const index = (daySeed() + offset) % items.length;
@@ -125,17 +133,18 @@ const dedupeSuggestions = <T extends { href: string }>(items: T[]) =>
 export const getFeaturedComparisons = ({ recent = [], saved = [], limit = 4 }: { recent?: StoredItem[]; saved?: StoredItem[]; limit?: number } = {}) => {
   const pinned = getEditorialPinnedComparisons();
   const contextSignals = collectContextSignals([...recent, ...saved]);
+  const todaySeed = daySeed();
   const scored = comparisons
     .map((item) => ({
       item,
       score:
         scoreComparison(item.slug, contextSignals, pinned.some((p) => p.slug === item.slug) ? 2 : 0) +
-        ((daySeed() + item.slug.length) % 3),
+        ((todaySeed + item.slug.length) % 3),
     }))
     .sort((a, b) => b.score - a.score || a.item.slug.localeCompare(b.item.slug))
     .map((entry) => entry.item);
 
-  return uniqBySlug([...pinned, ...scored]).slice(0, limit);
+  return uniqBySlug(scored).slice(0, Math.max(0, limit));
 };
 
 export const getTodayPick = ({ recent = [], saved = [] }: { recent?: StoredItem[]; saved?: StoredItem[] } = {}) => {
