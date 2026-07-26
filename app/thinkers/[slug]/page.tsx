@@ -6,6 +6,7 @@ import { RelatedThemeStrip } from "@/components/thinker/RelatedThemeStrip";
 import { NextThinkerStrip } from "@/components/thinker/NextThinkerStrip";
 import { ThinkerLearningPanel } from "@/components/thinker/ThinkerLearningPanel";
 import { RecentTracker } from "@/components/common/RecentTracker";
+import { QuotationBlock } from "@/components/common/QuotationBlock";
 import { getThinkerBySlug } from "@/lib/content";
 import { getNextThinkerRecommendations, getOrderedThemesForThinker, getThinkerRecommendations } from "@/lib/recommendations";
 
@@ -17,6 +18,7 @@ export default function ThinkerPage({ params }: { params: { slug: string } }) {
     <div>
       <RecentTracker kind="thinker" slug={thinker.slug} />
       <ThinkerHero thinker={thinker} />
+      <QuotationBlock quotation={thinker.quote} />
       <ThinkerSummaryCard title="核心の問い" body={thinker.coreQuestion} />
       <ThinkerSummaryCard title="基本回答" body={thinker.basicAnswer} />
       <ThinkerLearningPanel thinkerSlug={thinker.slug} />

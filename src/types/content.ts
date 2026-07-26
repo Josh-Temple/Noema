@@ -1,3 +1,30 @@
+export type SourceReference = {
+  id: string;
+  author?: string;
+  title: string;
+  originalTitle?: string;
+  workType?: "primary" | "secondary";
+  publicationYear?: string;
+  translator?: string;
+  publisher?: string;
+  edition?: string;
+  locator?: string;
+  url?: string;
+  note?: string;
+};
+
+export type Quotation = {
+  text: string;
+  sourceId?: string;
+  locator?: string;
+  originalText?: string;
+  language?: string;
+  translationType?: "noema" | "published" | "unknown";
+  translator?: string;
+  isParaphrase: boolean;
+  note?: string;
+};
+
 export type Thinker = {
   slug: string;
   nameJa: string;
@@ -5,7 +32,7 @@ export type Thinker = {
   eraLabel: string;
   yearsLabel: string;
   oneLiner: string;
-  quote: string;
+  quote: Quotation;
   coreQuestion: string;
   basicAnswer: string;
   opposedTo: string;
@@ -42,6 +69,7 @@ export type Comparison = {
   nextThinkerSlugs: string[];
   nextComparisonSlugs: string[];
   nextThemeSlugs: string[];
+  sourceIds?: string[];
 };
 
 export type Theme = {

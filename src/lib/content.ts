@@ -1,9 +1,15 @@
 import { comparisons } from "@/content/comparisons";
 import { themes } from "@/content/themes";
 import { thinkers } from "@/content/thinkers";
+import { sources } from "@/content/sources";
 
 export const getThinkerBySlug = (slug: string) => thinkers.find((item) => item.slug === slug);
 export const getThemeBySlug = (slug: string) => themes.find((item) => item.slug === slug);
+export const getSourceById = (id: string) => sources.find((item) => item.id === id);
+export const getSourcesByIds = (ids: string[] = []) => [...new Set(ids)].flatMap((id) => {
+  const source = getSourceById(id);
+  return source ? [source] : [];
+});
 
 export const getComparisonByThinkerPair = (left: string, right: string) =>
   comparisons.find(
@@ -34,4 +40,4 @@ export const getComparisonsForTheme = (slug: string) =>
 export const getThinkersForTheme = (slug: string) =>
   thinkers.filter((item) => item.relatedThemeSlugs.includes(slug));
 
-export { comparisons, themes, thinkers };
+export { comparisons, sources, themes, thinkers };
