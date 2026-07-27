@@ -117,10 +117,11 @@ Build-blocking content issues make validation fail. Non-blocking editorial relat
 
 ### Adding citations and summaries
 
-1. Add a reusable bibliography record to `src/content/sources.ts`. Use a stable, unique `id`, mark the work as `primary` or `secondary`, and prefer chapter/section locators over edition-dependent page numbers.
-2. Set a thinker `quote` to a structured `Quotation`. Direct quotations require `sourceId` and `isParaphrase: false`; learning summaries use `isParaphrase: true` and should explain simplification in `note`. Use `translationType: "noema"` for Noema translations, or `"published"` with translator metadata for a published translation.
-3. Add optional `sourceIds` to a comparison. Reuse existing IDs instead of duplicating bibliography data; primary and secondary works are separated automatically in the UI.
-4. Run `npm run validate:content` before committing. Unmigrated summaries remain valid, while any supplied citation metadata is validated strictly.
+1. Add a reusable bibliography record to `src/content/sources.ts`. Use a stable, unique `id`; `workType` is required and must be `primary` or `secondary`. Prefer chapter/section locators over edition-dependent page numbers.
+2. Set a thinker `quote` to a structured `Quotation`. Direct quotations require `sourceId`, `isParaphrase: false`, and an effective locator on either the quotation or its source. Learning summaries use `isParaphrase: true` and should explain simplification in `note`; shortened wording or wording that omits an important term must be classified as a summary rather than a direct quotation.
+3. Use `translationType: "noema"` for Noema translations, or `"published"` with a translator on either the quotation or source. Quotation metadata takes display precedence; if both records name a translator, the values must match. A direct quotation without `translationType` continues to display `翻訳情報未確認` during gradual migration.
+4. Add optional `sourceIds` to a comparison. Reuse existing IDs instead of duplicating bibliography data; primary and secondary works are separated automatically in the UI.
+5. Do not supply empty or whitespace-only optional citation values. Run `npm run validate:content` before committing; unmigrated summaries remain valid, while supplied citation metadata is validated strictly.
 
 ## Legacy reference
 

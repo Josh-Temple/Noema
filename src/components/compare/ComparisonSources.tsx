@@ -4,7 +4,7 @@ import { getSourcesByIds } from "@/lib/content";
 export const ComparisonSources = ({ sourceIds }: { sourceIds?: string[] }) => {
   const sources = getSourcesByIds(sourceIds);
   if (!sources.length) return null;
-  const groups = [["一次資料", sources.filter((source) => source.workType === "primary")], ["参考資料", sources.filter((source) => source.workType !== "primary")]] as const;
+  const groups = [["一次資料", sources.filter((source) => source.workType === "primary")], ["参考資料", sources.filter((source) => source.workType === "secondary")]] as const;
   return (
     <section className="mb-6 border-t border-noema-line pt-4" aria-labelledby="comparison-sources-heading">
       <h3 id="comparison-sources-heading" className="text-lg font-bold">参照資料</h3>

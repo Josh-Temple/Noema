@@ -23,6 +23,14 @@
 - The exact section-level locator for Arendt's formulation of freedom and the best locator for Foucault's compressed power formulation need specialist bibliographic review; neither is currently claimed as a direct quotation.
 - Published Japanese translations were not copied or attributed because edition and wording were not verified.
 
+## PR #21 follow-up
+
+- Kant remains a direct Noema translation, now restoring the omitted “self-incurred” qualification (`自ら招いた`) and retaining the German original and language metadata.
+- Direct quotations now need both a source ID and an effective quotation- or source-level locator. `workType` is required and runtime-validated as `primary` or `secondary`; whitespace-only citation metadata is rejected.
+- For published translations, quotation-level translator metadata takes display precedence over source metadata. Either location is accepted, equal duplicate values render once, and differing values fail validation. Noema translations do not display external translator metadata.
+- The Rousseau source URL was corrected from `Chapitre_I` to the registered Wikisource chapter path ending in `Chapitre_1`, identifying Book I, Chapter 1; tests pin both the stored value and rendered link.
+- Remaining bibliographic checks are unchanged: specialist review is still needed for every Noema translation in full context and for the Arendt/Foucault summary locators. No other thinkers or comparisons were migrated in this follow-up.
+
 ## Next migration targets
 
 - Thinkers: Plato, Aristotle, Descartes, Hume, Marx, Confucius, Laozi, and Han Feizi.

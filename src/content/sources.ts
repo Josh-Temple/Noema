@@ -6,7 +6,7 @@ export const sources: SourceReference[] = [
   { id: "hobbes-leviathan", author: "Thomas Hobbes", title: "リヴァイアサン", originalTitle: "Leviathan", workType: "primary", publicationYear: "1651", locator: "第13章", url: "https://www.gutenberg.org/ebooks/3207" },
   { id: "locke-understanding", author: "John Locke", title: "人間知性論", originalTitle: "An Essay Concerning Human Understanding", workType: "primary", publicationYear: "1689", locator: "第2巻第1章第2節", url: "https://www.gutenberg.org/ebooks/10615" },
   { id: "locke-government", author: "John Locke", title: "統治二論（後篇）", originalTitle: "Second Treatise of Government", workType: "primary", publicationYear: "1689", locator: "第2章・第9章", url: "https://www.gutenberg.org/ebooks/7370" },
-  { id: "rousseau-social-contract", author: "Jean-Jacques Rousseau", title: "社会契約論", originalTitle: "Du contrat social", workType: "primary", publicationYear: "1762", locator: "第1編第1章", url: "https://fr.wikisource.org/wiki/Du_contrat_social/%C3%89dition_1762/Livre_I/Chapitre_I" },
+  { id: "rousseau-social-contract", author: "Jean-Jacques Rousseau", title: "社会契約論", originalTitle: "Du contrat social", workType: "primary", publicationYear: "1762", locator: "第1編第1章", url: "https://fr.wikisource.org/wiki/Du_contrat_social/%C3%89dition_1762/Livre_I/Chapitre_1" },
   { id: "mencius", author: "孟子", title: "孟子", workType: "primary", locator: "公孫丑上 6", url: "https://ctext.org/mengzi/gong-sun-chou-i/zh" },
   { id: "xunzi-xing-e", author: "荀子", title: "荀子", workType: "primary", locator: "性悪篇 第23", url: "https://ctext.org/xunzi/xing-e/zh" },
   { id: "arendt-human-condition", author: "Hannah Arendt", title: "人間の条件", originalTitle: "The Human Condition", workType: "primary", publicationYear: "1958", note: "表示文の背景となる行為・複数性・公共領域の議論を参照。" },

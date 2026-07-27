@@ -260,7 +260,7 @@ export const thinkers: Thinker[] = [
     eraLabel: "近代",
     yearsLabel: "1724–1804",
     oneLiner: "経験と理性の条件を批判的に統合した。",
-    quote: { text: "啓蒙とは、人間が未成年状態から抜け出すこと。", sourceId: "kant-enlightenment", locator: "冒頭", translationType: "noema", isParaphrase: false },
+    quote: { text: "啓蒙とは、人間が自ら招いた未成年状態から抜け出すことである。", sourceId: "kant-enlightenment", locator: "冒頭", originalText: "Aufklärung ist der Ausgang des Menschen aus seiner selbst verschuldeten Unmündigkeit.", language: "de", translationType: "noema", isParaphrase: false },
     coreQuestion: "経験が成立する条件は何か。",
     basicAnswer: "主体の先験的形式が経験を可能にする。",
     opposedTo: "経験論と独断的合理論の双方",
