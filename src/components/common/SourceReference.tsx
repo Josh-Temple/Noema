@@ -1,12 +1,14 @@
 import { SourceReference as SourceReferenceData } from "@/types/content";
 
-const description = (source: SourceReferenceData, locator?: string) =>
-  [source.author, `『${source.title}』`, locator ?? source.locator, source.translator && `翻訳: ${source.translator}`, source.publisher, source.edition]
+const description = (source: SourceReferenceData, locator?: string, showTranslator = true) =>
+  [source.author, `『${source.title}』`, locator ?? source.locator, showTranslator && source.translator && `翻訳: ${source.translator}`, source.publisher, source.edition]
     .filter(Boolean)
     .join("、");
 
-export const SourceReference = ({ source, locator, linked = true }: { source: SourceReferenceData; locator?: string; linked?: boolean }) => {
-  const label = description(source, locator);
+type SourceReferenceProps = { source: SourceReferenceData; locator?: string; linked?: boolean; showTranslator?: boolean };
+
+export const SourceReference = ({ source, locator, linked = true, showTranslator = true }: SourceReferenceProps) => {
+  const label = description(source, locator, showTranslator);
   return (
     <span>
       {linked && source.url ? (

@@ -3,7 +3,7 @@ export type SourceReference = {
   author?: string;
   title: string;
   originalTitle?: string;
-  workType?: "primary" | "secondary";
+  workType: "primary" | "secondary";
   publicationYear?: string;
   translator?: string;
   publisher?: string;

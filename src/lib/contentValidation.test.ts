@@ -92,6 +92,69 @@ describe("content validation", () => {
     expect(messages).toContain("quote references missing source: missing-source");
   });
 
+  it("requires an effective locator only for direct quotes", () => {
+    const sourceLocator = data();
+    sourceLocator.thinkers[0].quote = { text: "direct", sourceId: sourceLocator.sources[0].id, isParaphrase: false };
+    expect(validateContentRelations(sourceLocator).map((issue) => issue.message)).not.toContain("direct quote must have a locator on the quotation or source");
+
+    const quoteLocator = data();
+    quoteLocator.sources[0].locator = undefined;
+    quoteLocator.thinkers[0].quote = { text: "direct", sourceId: quoteLocator.sources[0].id, locator: "section 1", isParaphrase: false };
+    expect(validateContentRelations(quoteLocator).map((issue) => issue.message)).not.toContain("direct quote must have a locator on the quotation or source");
+
+    quoteLocator.thinkers[0].quote.locator = undefined;
+    expect(validateContentRelations(quoteLocator).map((issue) => issue.message)).toContain("direct quote must have a locator on the quotation or source");
+    quoteLocator.thinkers[0].quote = { text: "summary", isParaphrase: true };
+    expect(validateContentRelations(quoteLocator).map((issue) => issue.message)).not.toContain("direct quote must have a locator on the quotation or source");
+  });
+
+  it("validates source classifications and optional strings at runtime", () => {
+    const broken = data();
+    (broken.sources[0] as { workType?: string }).workType = undefined;
+    (broken.sources[1] as { workType?: string }).workType = "tertiary";
+    broken.sources[2].author = " ";
+    const messages = validateContentRelations(broken).map((issue) => issue.message);
+    expect(messages.filter((message) => message === "workType must be primary or secondary")).toHaveLength(2);
+    expect(messages).toContain("author must not be empty when provided");
+  });
+
+  it("validates quotation strings, original-language pairs, and translation types", () => {
+    const broken = data();
+    broken.thinkers[0].quote.sourceId = " ";
+    broken.thinkers[1].quote.originalText = " ";
+    broken.thinkers[2].quote = { text: "language only", isParaphrase: true, language: "de" };
+    broken.thinkers[3].quote = { text: "original only", isParaphrase: true, originalText: "Original" };
+    (broken.thinkers[4].quote as { translationType?: string }).translationType = "machine";
+    const messages = validateContentRelations(broken).map((issue) => issue.message);
+    expect(messages).toEqual(expect.arrayContaining([
+      "quote.sourceId must not be empty when provided",
+      "quote.originalText must not be empty when provided",
+      "quote.language requires originalText",
+      "originalText requires language",
+      "translationType must be noema, published, or unknown",
+    ]));
+  });
+
+  it("validates translator provenance and consistency", () => {
+    const broken = data();
+    broken.sources[0].translator = "Source Translator";
+    broken.thinkers[0].quote = { text: "published", sourceId: broken.sources[0].id, locator: "1", isParaphrase: false, translationType: "published", translator: "Quote Translator" };
+    broken.thinkers[1].quote = { text: "published", sourceId: broken.sources[1].id, locator: "1", isParaphrase: false, translationType: "published" };
+    broken.thinkers[2].quote = { text: "noema", sourceId: broken.sources[2].id, locator: "1", isParaphrase: false, translationType: "noema", translator: "External" };
+    const messages = validateContentRelations(broken).map((issue) => issue.message);
+    expect(messages).toContain("quotation and source translators must match");
+    expect(messages).toContain("published translation must name a translator");
+    expect(messages).toContain("Noema translation must not name an external translator");
+  });
+
+  it("keeps Kant's direct quote faithful and Rousseau's canonical chapter URL", () => {
+    const kant = thinkers.find((thinker) => thinker.slug === "kant")!;
+    expect(kant.quote).toMatchObject({ sourceId: "kant-enlightenment", locator: "冒頭", language: "de", isParaphrase: false });
+    expect(kant.quote.text).toContain("自ら招いた");
+    expect(kant.quote.originalText).toContain("seiner selbst verschuldeten");
+    expect(sources.find((source) => source.id === "rousseau-social-contract")?.url).toBe("https://fr.wikisource.org/wiki/Du_contrat_social/%C3%89dition_1762/Livre_I/Chapitre_1");
+  });
+
   it("allows an unsourced summary but validates translations and comparison references", () => {
     const broken = data();
     broken.thinkers[0].quote = { text: "summary", isParaphrase: true };

@@ -56,8 +56,9 @@ const validateSources = (data: ContentData, issues: ContentValidationIssue[]) =>
   data.sources.forEach((source) => {
     validateRequiredString(issues, "source", source.id, "id", source.id);
     validateRequiredString(issues, "source", source.id, "title", source.title);
-    if (source.workType && !["primary", "secondary"].includes(source.workType)) addIssue(issues, "source", source.id, `invalid workType: ${source.workType}`);
-    validateOptionalString(issues, "source", source.id, "url", source.url);
+    if (!["primary", "secondary"].includes(source.workType)) addIssue(issues, "source", source.id, "workType must be primary or secondary");
+    (["author", "originalTitle", "publicationYear", "translator", "publisher", "edition", "locator", "url", "note"] as const)
+      .forEach((field) => validateOptionalString(issues, "source", source.id, field, source[field]));
     if (source.url?.trim()) {
       try { new URL(source.url); } catch { addIssue(issues, "source", source.id, `url must be an absolute http(s) URL: ${source.url}`); }
       if (!/^https?:\/\//.test(source.url)) addIssue(issues, "source", source.id, `url must be an absolute http(s) URL: ${source.url}`);
@@ -66,20 +67,28 @@ const validateSources = (data: ContentData, issues: ContentValidationIssue[]) =>
 };
 
 const validateThinkers = (data: ContentData, issues: ContentValidationIssue[]) => {
-  const sourceIds = new Set(data.sources.map((item) => item.id));
+  const sourceById = new Map(data.sources.map((item) => [item.id, item]));
   const thinkerSlugs = new Set(data.thinkers.map((item) => item.slug));
   const themeSlugs = new Set(data.themes.map((item) => item.slug));
   const comparisonSlugs = new Set(data.comparisons.map((item) => item.slug));
   data.thinkers.forEach((thinker) => {
     const quote = thinker.quote;
+    const source = quote.sourceId?.trim() ? sourceById.get(quote.sourceId) : undefined;
     validateRequiredString(issues, "thinker", thinker.slug, "quote.text", quote.text);
-    if (!quote.isParaphrase && !quote.sourceId) addIssue(issues, "thinker", thinker.slug, "direct quote must reference a source");
-    if (quote.sourceId && !sourceIds.has(quote.sourceId)) addIssue(issues, "thinker", thinker.slug, `quote references missing source: ${quote.sourceId}`);
-    if (quote.translationType === "published" && !(quote.translator?.trim() || (quote.sourceId && data.sources.find((source) => source.id === quote.sourceId)?.translator?.trim()))) addIssue(issues, "thinker", thinker.slug, "published translation must name a translator");
+    validateOptionalString(issues, "thinker", thinker.slug, "quote.sourceId", quote.sourceId);
+    (["locator", "originalText", "language", "translator", "note"] as const)
+      .forEach((field) => validateOptionalString(issues, "thinker", thinker.slug, `quote.${field}`, quote[field]));
+    if (!quote.isParaphrase && !quote.sourceId?.trim()) addIssue(issues, "thinker", thinker.slug, "direct quote must reference a source");
+    if (quote.sourceId !== undefined && quote.sourceId.trim() && !sourceById.has(quote.sourceId)) addIssue(issues, "thinker", thinker.slug, `quote references missing source: ${quote.sourceId}`);
+    const effectiveLocator = quote.locator?.trim() || source?.locator?.trim();
+    if (!quote.isParaphrase && !effectiveLocator) addIssue(issues, "thinker", thinker.slug, "direct quote must have a locator on the quotation or source");
+    if (quote.translationType !== undefined && !["noema", "published", "unknown"].includes(quote.translationType)) addIssue(issues, "thinker", thinker.slug, "translationType must be noema, published, or unknown");
+    if (quote.translationType === "published" && !(quote.translator?.trim() || source?.translator?.trim())) addIssue(issues, "thinker", thinker.slug, "published translation must name a translator");
+    if (quote.translationType === "published" && quote.translator?.trim() && source?.translator?.trim() && quote.translator !== source.translator) addIssue(issues, "thinker", thinker.slug, "quotation and source translators must match");
     if (quote.translationType === "noema" && quote.translator?.trim()) addIssue(issues, "thinker", thinker.slug, "Noema translation must not name an external translator");
-    if (quote.originalText !== undefined && !quote.language?.trim()) addIssue(issues, "thinker", thinker.slug, "originalText requires language");
-    validateOptionalString(issues, "thinker", thinker.slug, "quote.locator", quote.locator);
-    validateOptionalString(issues, "thinker", thinker.slug, "quote.note", quote.note);
+    if (quote.translationType === "unknown" && quote.translator?.trim()) addIssue(issues, "thinker", thinker.slug, "unknown translation must not name a translator; use published");
+    if (quote.originalText?.trim() && !quote.language?.trim()) addIssue(issues, "thinker", thinker.slug, "originalText requires language");
+    if (quote.language?.trim() && !quote.originalText?.trim()) addIssue(issues, "thinker", thinker.slug, "quote.language requires originalText");
     validateStringArray(issues, "thinker", thinker.slug, "keyConcepts", thinker.keyConcepts);
     validateStringArray(issues, "thinker", thinker.slug, "keyWorks", thinker.keyWorks);
     validateSlugArray(issues, "thinker", thinker.slug, "relatedThinkerSlugs", thinker.relatedThinkerSlugs);
