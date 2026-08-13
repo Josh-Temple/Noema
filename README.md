@@ -56,6 +56,7 @@ Build-blocking content issues make validation fail. Non-blocking editorial relat
 
 ## Build and deployment
 
+- Production: https://noema-mu.vercel.app/
 - Deploy root Next.js app on Vercel.
 - Build command: `npm run build`
 - Start command: `npm run start`
