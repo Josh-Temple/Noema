@@ -13,16 +13,16 @@ export const SearchResultCard = ({ title, subtitle, href, kind = "comparison" }:
   const Icon = config.icon;
 
   return (
-    <Link href={href} className="flex items-center justify-between border-b border-[#253257] py-3 transition hover:bg-white/[0.02]">
+    <Link href={href} className="flex items-center justify-between gap-4 border-b border-noema-line py-4 transition duration-300 hover:bg-slate-50">
       <div>
-        <p className="mb-1 inline-flex items-center gap-1 text-[11px] text-[#c1ceef]">
+        <p className="mb-1 inline-flex items-center gap-1 text-[0.65rem] font-black uppercase tracking-widest text-noema-blue">
           <Icon className="h-3 w-3" />
           <span>{config.label}</span>
         </p>
         <p className="font-bold">{title}</p>
         <p className="text-sm text-noema-muted">{subtitle}</p>
       </div>
-      <span className="inline-flex items-center gap-1 text-xs text-[#c1ceef]">
+      <span className="inline-flex items-center gap-1 text-xs font-black uppercase tracking-widest text-noema-accent">
         <span>開く</span>
         <ChevronRightIcon className="h-3 w-3" />
       </span>

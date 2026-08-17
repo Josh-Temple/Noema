@@ -10,13 +10,13 @@ type ReadingOrderItem = {
 };
 
 export const ThemeReadingOrderCard = ({ readingOrder, sections }: { readingOrder: ThemeReadingOrder; sections: ReadingOrderItem[] }) => (
-  <section className="mb-5 border-y border-noema-line/35 bg-[#101531]/35 px-2 py-3" aria-labelledby="theme-reading-order-heading">
-    <p className="text-[11px] uppercase tracking-[0.16em] text-[#93a8e7]">{readingOrder.eyebrow ?? "読み順ガイド"}</p>
-    <h3 id="theme-reading-order-heading" className="mt-1 flex items-center gap-2 text-lg font-bold">
-      <CompassIcon className="h-4 w-4 text-noema-accent" />
+  <section className="mb-8 rounded-2xl border border-noema-line bg-white p-5 shadow-sm" aria-labelledby="theme-reading-order-heading">
+    <p className="text-[0.65rem] font-black uppercase tracking-[0.16em] text-noema-blue">{readingOrder.eyebrow ?? "読み順ガイド"}</p>
+    <h3 id="theme-reading-order-heading" className="mt-2 flex items-center gap-2 text-lg font-black">
+      <CompassIcon className="h-4 w-4 text-noema-blue" />
       <span>{readingOrder.title}</span>
     </h3>
-    <div className="mt-2 divide-y divide-noema-line/20">
+    <div className="mt-4 divide-y divide-noema-line">
       {sections
         .filter((section) => section.items.length > 0)
         .map((section) => (

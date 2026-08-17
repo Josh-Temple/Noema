@@ -12,7 +12,7 @@ export const SourceReference = ({ source, locator, linked = true, showTranslator
   return (
     <span>
       {linked && source.url ? (
-        <a className="underline decoration-noema-line underline-offset-4 hover:text-white" href={source.url} target="_blank" rel="noreferrer noopener" aria-label={`${source.title}の出典を新しいタブで開く`}>
+        <a className="underline decoration-noema-line underline-offset-4 hover:text-noema-accent" href={source.url} target="_blank" rel="noreferrer noopener" aria-label={`${source.title}の出典を新しいタブで開く`}>
           {label}
         </a>
       ) : label}

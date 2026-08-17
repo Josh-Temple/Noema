@@ -27,15 +27,15 @@ export default function ComparePage({ params }: { params: { left: string; right:
       <ComparisonFocusPoints items={comparison.whatToWatch} />
       <ComparisonSummary text={comparison.summaryDifference} />
       <CommonGroundCard text={comparison.commonGround} />
-      <section className="mb-5" aria-label="比較の論点セクション">
+      <section className="mb-8" aria-label="比較の論点セクション">
         {comparison.sections.map((section) => (
           <ComparisonSectionCard key={section.title} section={section} />
         ))}
       </section>
       {review ? <ComparisonReviewCard review={review} /> : null}
       <ComparisonSources sourceIds={comparison.sourceIds} />
-      <section className="mb-6" aria-labelledby="next-step-heading">
-        <h3 id="next-step-heading" className="mb-2 text-2xl font-bold">
+      <section className="mb-8" aria-labelledby="next-step-heading">
+        <h3 id="next-step-heading" className="mb-4 border-l-4 border-noema-yellow pl-4 text-xl font-black">
           次の一歩
         </h3>
         {getCompareNextStepSuggestions(comparison.slug).map((item) => (

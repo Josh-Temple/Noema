@@ -6,7 +6,7 @@ export type SavedEntry = { slug: string; title: string; href: string };
 
 export const SavedSection = ({ items }: { items: SavedEntry[] }) => (
   <section aria-labelledby="saved-items-heading">
-    <h2 id="saved-items-heading" className="mb-3 flex items-center gap-2 text-3xl font-bold">
+    <h2 id="saved-items-heading" className="mb-4 border-l-4 border-noema-accent pl-4 text-xl font-black">
       <BookmarkIcon className="h-6 w-6 text-noema-accent" />
       <span>保存済み</span>
     </h2>
