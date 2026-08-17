@@ -26,15 +26,15 @@ export const NextStepCard = ({
       href={href}
       className={
         isRow
-          ? "group block rounded-md px-1 py-2.5 text-noema-muted transition hover:bg-white/[0.02]"
-          : "mb-2 block border-b border-noema-line/30 px-1 py-3 text-noema-muted transition hover:bg-white/[0.02]"
+          ? "group block rounded-xl px-3 py-3 text-noema-muted transition duration-300 hover:bg-slate-50"
+          : "mb-3 block rounded-xl border border-noema-line bg-white px-4 py-4 text-noema-muted shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-noema-blue"
       }
     >
       <p
         className={
           isRow
-            ? "mb-1 inline-flex items-center gap-1 text-[11px] text-[#a8b7e3]"
-            : "mb-1 inline-flex items-center gap-1 text-[11px] text-[#b4c2e9]"
+            ? "mb-1 inline-flex items-center gap-1 text-[0.65rem] font-black uppercase tracking-widest text-noema-blue"
+            : "mb-1 inline-flex items-center gap-1 text-[0.65rem] font-black uppercase tracking-widest text-noema-blue"
         }
       >
         <Icon className="h-3 w-3" />
@@ -42,9 +42,9 @@ export const NextStepCard = ({
       </p>
       <p className="flex items-center justify-between gap-2 text-noema-text">
         <span className={isRow ? "text-[15px]" : ""}>{title}</span>
-        <ChevronRightIcon className={`h-4 w-4 ${isRow ? "text-[#9baad7] group-hover:text-[#c2d0f5]" : "text-[#b8c5ec]"}`} />
+        <ChevronRightIcon className={`h-4 w-4 ${isRow ? "text-noema-blue" : "text-noema-accent"}`} />
       </p>
-      {subtitle ? <p className={`mt-1 text-xs leading-relaxed ${isRow ? "text-[#8f9eca]" : "text-[#aebbe5]"}`}>{subtitle}</p> : null}
+      {subtitle ? <p className="mt-1 text-xs leading-relaxed text-noema-muted">{subtitle}</p> : null}
     </Link>
   );
 };

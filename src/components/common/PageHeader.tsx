@@ -1,5 +1,8 @@
 export const PageHeader = ({ title }: { title: string }) => (
-  <header className="sticky top-0 z-20 flex h-[70px] items-center justify-center border-b border-[#5970ae4d] bg-[#0a0b24f2] backdrop-blur">
-    <h1 className="text-3xl font-bold">{title}</h1>
+  <header className="sticky top-0 z-20 border-b border-noema-line bg-white/90 px-6 py-4 backdrop-blur lg:px-10">
+    <div className="mx-auto max-w-app lg:max-w-archive">
+      <p className="text-[0.6rem] font-black uppercase tracking-[0.24em] text-noema-muted">NOEMA / ARCHIVE</p>
+      <h1 className="mt-1 text-xl font-black tracking-tight text-noema-text">{title}</h1>
+    </div>
   </header>
 );

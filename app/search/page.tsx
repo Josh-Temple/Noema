@@ -26,7 +26,7 @@ export default function SearchPage() {
 
       {!isEmpty && pathwayHighlights.length > 0 ? (
         <section className="mb-4" aria-labelledby="search-pathway-highlights-heading">
-          <h2 id="search-pathway-highlights-heading" className="mb-2 flex items-center gap-2 text-2xl font-bold">
+          <h2 id="search-pathway-highlights-heading" className="mb-4 border-l-4 border-noema-blue pl-4 text-xl font-black">
             <SparkIcon className="h-5 w-5 text-noema-accent" />
             <span>この検索から入りやすい比較</span>
           </h2>
@@ -39,7 +39,7 @@ export default function SearchPage() {
       {isNoResult ? (
         <section className="mb-4" aria-label="検索の空結果">
           <EmptyState icon={<SearchIcon className="h-6 w-6" />} title="検索結果が見つかりません" body="語を短くするか、下の入口比較・テーマから始めるのがおすすめです。" />
-          <h2 className="mb-2 mt-4 flex items-center gap-2 text-2xl font-bold">
+          <h2 className="mb-4 mt-8 border-l-4 border-noema-accent pl-4 text-xl font-black">
             <CompassIcon className="h-5 w-5 text-noema-accent" />
             <span>最初に見るなら</span>
           </h2>

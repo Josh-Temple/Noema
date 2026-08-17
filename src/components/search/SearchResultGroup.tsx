@@ -14,8 +14,8 @@ export const SearchResultGroup = ({ kind, label, entries }: { kind: SearchResult
   const Icon = kindIcon[kind];
 
   return (
-    <section aria-labelledby={`search-group-${kind}`} className="mb-4">
-      <h2 id={`search-group-${kind}`} className="mb-2 flex items-center gap-2 text-3xl font-bold">
+    <section aria-labelledby={`search-group-${kind}`} className="mb-10">
+      <h2 id={`search-group-${kind}`} className="mb-4 border-l-4 border-noema-accent pl-4 text-xl font-black">
         <Icon className="h-5 w-5 text-noema-accent" />
         <span>{label}</span>
       </h2>

@@ -16,9 +16,9 @@ export const ThemeStarterCard = ({
   items: Comparison[];
 }) => (
   <InfoCard>
-    <p className="mb-2 text-xs uppercase tracking-[0.18em] text-[#8ea3e6]">{eyebrow}</p>
-    <h3 className="flex items-center gap-2 text-xl font-bold">
-      <CompassIcon className="h-5 w-5 text-noema-accent" />
+    <p className="mb-2 text-[0.65rem] font-black uppercase tracking-[0.18em] text-noema-yellow">{eyebrow}</p>
+    <h3 className="flex items-center gap-2 text-xl font-black">
+      <CompassIcon className="h-5 w-5 text-noema-yellow" />
       <span>{title}</span>
     </h3>
     <p className="mb-3 text-noema-muted">{text}</p>
