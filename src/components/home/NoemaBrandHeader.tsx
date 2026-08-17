@@ -14,3 +14,4 @@ export const NoemaBrandHeader = () => (
     <p className="mt-5 max-w-sm text-[0.65rem] font-black uppercase tracking-[0.2em] text-noema-muted">Philosophy through comparison.</p>
     <p className="mt-3 max-w-xl text-sm leading-7 text-slate-600">思想家と問いを比較しながら、考えるための入口を少しずつ集めます。</p>
   </header>
+);
