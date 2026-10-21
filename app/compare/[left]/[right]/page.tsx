@@ -12,8 +12,8 @@ import { getComparisonByThinkerPair, getThinkerBySlug } from "@/lib/content";
 import { getComparisonReview, getCompareNextStepSuggestions } from "@/lib/recommendations";
 
 export default async function ComparePage({ params }: { params: Promise<{ left: string; right: string }> }) {
-  const { left, right } = await params;
-  const comparison = getComparisonByThinkerPair(left, right);
+  const { left: leftSlug, right: rightSlug } = await params;
+  const comparison = getComparisonByThinkerPair(leftSlug, rightSlug);
   if (!comparison) return notFound();
   const left = getThinkerBySlug(comparison.leftThinkerSlug);
   const right = getThinkerBySlug(comparison.rightThinkerSlug);
