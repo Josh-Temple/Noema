@@ -10,8 +10,9 @@ import { QuotationBlock } from "@/components/common/QuotationBlock";
 import { getThinkerBySlug } from "@/lib/content";
 import { getNextThinkerRecommendations, getOrderedThemesForThinker, getThinkerRecommendations } from "@/lib/recommendations";
 
-export default function ThinkerPage({ params }: { params: { slug: string } }) {
-  const thinker = getThinkerBySlug(params.slug);
+export default async function ThinkerPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const thinker = getThinkerBySlug(slug);
   if (!thinker) return notFound();
 
   return (
