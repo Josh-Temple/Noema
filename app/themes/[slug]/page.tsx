@@ -9,8 +9,9 @@ import { getOrderedThemeComparisons } from "@/lib/recommendations";
 import { RecentTracker } from "@/components/common/RecentTracker";
 import { getComparisonBySlugs, getPriorityThemePathway } from "@/lib/pathways";
 
-export default function ThemePage({ params }: { params: { slug: string } }) {
-  const theme = getThemeBySlug(params.slug);
+export default async function ThemePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const theme = getThemeBySlug(slug);
   if (!theme) return notFound();
 
   const pathway = getPriorityThemePathway(theme.slug);

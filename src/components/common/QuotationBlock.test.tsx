@@ -5,7 +5,7 @@ import { sources } from "@/content/sources";
 describe("QuotationBlock", () => {
   it("shows a sourced direct Noema translation and links URL sources", () => {
     render(<QuotationBlock quotation={{ text: "啓蒙", sourceId: "kant-enlightenment", isParaphrase: false, translationType: "noema" }} />);
-    expect(screen.getByText("直接引用")).toBeInTheDocument();
+    expect(screen.getByText(/直接引用/)).toBeInTheDocument();
     expect(screen.getByText("出典:")).toBeInTheDocument();
     expect(screen.getByText("Noema訳")).toBeInTheDocument();
     expect(screen.getByRole("link")).toHaveAttribute("target", "_blank");
@@ -14,7 +14,7 @@ describe("QuotationBlock", () => {
 
   it("labels summaries without presenting them as blockquotes or links", () => {
     const { container } = render(<QuotationBlock quotation={{ text: "学習用本文", isParaphrase: true }} />);
-    expect(screen.getByText("要約・意訳")).toBeInTheDocument();
+    expect(screen.getByText(/要約・意訳/)).toBeInTheDocument();
     expect(screen.getByText("出典未確認")).toBeInTheDocument();
     expect(container.querySelector("blockquote")).toBeNull();
     expect(screen.queryByRole("link")).toBeNull();

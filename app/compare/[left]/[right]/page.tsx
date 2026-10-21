@@ -11,8 +11,9 @@ import { RecentTracker } from "@/components/common/RecentTracker";
 import { getComparisonByThinkerPair, getThinkerBySlug } from "@/lib/content";
 import { getComparisonReview, getCompareNextStepSuggestions } from "@/lib/recommendations";
 
-export default function ComparePage({ params }: { params: { left: string; right: string } }) {
-  const comparison = getComparisonByThinkerPair(params.left, params.right);
+export default async function ComparePage({ params }: { params: Promise<{ left: string; right: string }> }) {
+  const { left: leftSlug, right: rightSlug } = await params;
+  const comparison = getComparisonByThinkerPair(leftSlug, rightSlug);
   if (!comparison) return notFound();
   const left = getThinkerBySlug(comparison.leftThinkerSlug);
   const right = getThinkerBySlug(comparison.rightThinkerSlug);
